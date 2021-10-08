@@ -95,7 +95,7 @@ bool FunctionInfo::check(std::string const& s, std::size_t f,
 		return true;
 	}
 
-	predicate = join(v, false, ' ');
+	predicate = joinVInverse(v);
 
 
 	/*	inline GtkWidget *getWidget() const {
@@ -146,7 +146,7 @@ std::string FunctionInfo::js() {
 	 */
 	JS2("ps", name)
 
-	return surround(join(v), CURLY);
+	return surround(jc(v), CURLY);
 
 }
 

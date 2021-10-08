@@ -160,7 +160,7 @@ std::string ProjectInfo::jsFileData(bool oneProject) {
 		for (auto& t : m_vsi) {
 			w.push_back(t.js());
 		}
-		return join(w);
+		return jc(w);
 	}
 
 #define A(a) v.push_back(js2(#a, a()));
@@ -174,8 +174,8 @@ std::string ProjectInfo::jsFileData(bool oneProject) {
 		w.push_back(t.js());
 	}
 
-	v.push_back(js2("a", join(w), SQUARE));
-	return surround(join(v), CURLY);
+	v.push_back(js2("a", jc(w), SQUARE));
+	return surround(jc(v), CURLY);
 }
 
 void ProjectInfo::proceedFunctions(std::string const& file,
@@ -430,9 +430,8 @@ std::string ProjectInfo::jsFunctionsData() {
 	VString v;
 	for (auto&a : m_fi) {
 		v.push_back(a.js());
-//		printl(a.string())
 	}
-	return join(v);
+	return jc(v);
 }
 
 std::string ProjectInfo::jsClassData() {
@@ -440,7 +439,7 @@ std::string ProjectInfo::jsClassData() {
 	for (auto&a : m_ci) {
 		v.push_back(a.second.js());
 	}
-	return join(v);
+	return jc(v);
 }
 
 bool ProjectInfo::pf(std::string const& a, std::string& s, std::string& e,

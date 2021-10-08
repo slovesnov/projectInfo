@@ -135,33 +135,20 @@ void jsPath(std::string& s) {
 	std::replace(s.begin(), s.end(), '\\', '/');
 }
 
-std::string join(VString const&v, bool direct, const char separator) {
+std::string joinVInverse(VString const&v) {
+	const char separator= ' ';
 	std::string s;
-	bool f = true;
-	for (auto const&a : v) {
-		if (f) {
-			f = false;
+	for(auto a=v.rbegin();a!=v.rend();a++){
+		if(a!=v.rbegin()){
+			s+=separator;
 		}
-		else {
-			if (direct) {
-				s += separator;
-			}
-			else {
-				s = separator + s;
-			}
-		}
-		if (direct) {
-			s += a;
-		}
-		else {
-			s = a + s;
-		}
+		s+=*a;
 	}
 	return s;
 }
 
-int countOccurence(const std::string& subject, const char c) {
-	return count_if(subject.begin(), subject.end(), [&c](char a) {return a==c;});
+std::string jc(VString const &v, const char separator/*=','*/){
+	return joinV(v,separator);
 }
 
 std::string trim(const std::string& s) {

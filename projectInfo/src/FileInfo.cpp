@@ -25,7 +25,7 @@ std::string FileInfo::js() {
 #undef A
 	v.push_back(js2("time", b));
 
-	return surround(join(v), CURLY);
+	return surround(jc(v), CURLY);
 
 }
 

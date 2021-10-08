@@ -13,7 +13,7 @@
 /* -1 - test mode
  * 0-4 - {path,oneProject,outputFileName} from projectOption
  */
-#define TYPE 0
+#define TYPE 3
 
 std::tuple<std::string,bool,std::string> projectOption[]={
 		/*0*/{"c:/Users/user/git/projectInfo/projectInfo/src",1,"projectInfo"}
@@ -120,7 +120,7 @@ int main(int argc, char* argv[]) {
 		for (auto& t : v) {
 			w.push_back(t.jsFileData(false));
 		}
-		s += "gd=" + surround(join(w), SQUARE) + ";";
+		s += "gd=" + surround(jc(w), SQUARE) + ";";
 
 		s += "</script></head><body onload='load()'><table id='";
 		s += oneProject ? "table0" : "main";

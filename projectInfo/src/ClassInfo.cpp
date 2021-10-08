@@ -151,5 +151,5 @@ std::string ClassInfo::js() {
 	 */
 	JS2("infos", name)
 #undef A
-	return surround(join(v), CURLY);
+	return surround(jc(v), CURLY);
 }
