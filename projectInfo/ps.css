@@ -1,0 +1,144 @@
+/*
+td:nth-child(2),td:nth-child(3,td:nth-child(4)
+for both main & inner tables
+
+,#main > tbody>tr>td:nth-child(3){
+*/
+img:hover{
+	cursor: pointer;
+}
+
+#table0 td:first-child,
+td:nth-child(n+2){
+	text-align:right;
+}
+
+/*number of projects, need to use > otherwise last tr in inner tables is set also*/
+#main >tbody> tr:last-child  td:first-child{
+	text-align:center;
+}
+
+/*table:not(.c) for all tables except class='c'*/
+table:not(.c) td:nth-child(3){
+	background: #FFC300;
+}
+
+table:not(.c) td:nth-child(4){
+	background: rgb(224,224,224);
+}
+
+table.show {
+	display:table-cell;
+}
+
+table.hide {
+	display:none;
+}
+
+table.nb
+,table.nb td
+,table.nb th{ 
+	border-collapse: collapse;
+	border:none;
+}
+
+table.nb th
+,table.nb td{
+	padding:0;
+}
+
+table.c { 
+	border-collapse: collapse;
+}
+table.c  tr { 
+	border: none;
+}
+
+table.c >tbody>tr> td {
+	border-left: solid 1px white;
+	border-left: solid 1px white;
+	padding: 1px 0;
+}
+
+
+table.sort tr:first-child td{
+	vertical-align:top;
+}
+
+ table.sort tr:last-child td{
+	vertical-align:bottom;
+}
+
+/*functions  info
+background: Cornsilk;
+	background: Beige;
+	background: Azure;
+	background: LemonChiffon;
+	
+	PapayaWhip
+	background: SeaShell;
+*/
+
+table.c > tbody > tr:nth-child(5n+1) > td{
+	background: Lavender;
+}
+
+table.c > tbody > tr:nth-child(5n+2) > td{
+	background: Beige;
+}
+
+table.c > tbody > tr:nth-child(5n+3) > td{
+	background: Azure;
+}
+
+table.c > tbody > tr:nth-child(5n+4) > td{
+	/* background: LemonChiffon; */
+	background: DarkSalmon;
+}
+
+/*like eclipse*/
+span.k{
+	color: rgb(127,0,85);
+}
+
+/*function name with class like eclipse*/
+span.b, span.k{
+	font-weight: bold;
+}
+
+/*https://www.w3schools.com/howto/howto_js_tabs.asp*/
+/* Style the tab */
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+/* Style the buttons that are used to open the tab content */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
