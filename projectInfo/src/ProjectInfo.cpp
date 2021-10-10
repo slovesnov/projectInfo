@@ -213,6 +213,9 @@ void ProjectInfo::proceedFunctions(std::string const& file,
 
 	i = -1;
 	for (auto&a : v) {
+
+		printl(a)
+
 		i++;		//increase here to avoid bugs when do continue
 		line = nl;
 		nl += countOccurence(a, '\n');
@@ -309,6 +312,7 @@ void ProjectInfo::proceedFunctions(std::string const& file,
 		}
 
 		if (fi.check(s, f, e, classes, curly, fileName, line)) {
+			printinfo
 			m_fi.push_back(fi);
 		}
 		else{

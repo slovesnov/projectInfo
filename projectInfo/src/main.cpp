@@ -13,7 +13,7 @@
 /* -1 - test mode
  * 0-4 - {path,oneProject,outputFileName} from projectOption
  */
-#define TYPE 3
+#define TYPE 4
 
 std::tuple<std::string,bool,std::string> projectOption[]={
 		/*0*/{"c:/Users/user/git/projectInfo/projectInfo/src",1,"projectInfo"}

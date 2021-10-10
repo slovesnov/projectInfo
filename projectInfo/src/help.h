@@ -19,7 +19,7 @@
 
 #define JS2(a,b) v.push_back(js2(a, b));
 
-//should match with SU array in common.cpp
+//should match with SU array in help.cpp
 enum SURROUND {
 	CURLY, SQUARE, QUOTE, ROUND, ANGLE
 };
