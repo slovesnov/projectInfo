@@ -203,8 +203,8 @@ void ProjectInfo::proceedFunctions(std::string const& file,
 	std::string STRING=R"("(\\.|[^\\"])*")"
 	;
 	std::string CHAR = R"('(\\.|[^\\'])')";
-	std::string S = "|";
-	std::string r(R"(\{|\})" + S + COMMENT + S + STRING + S + CHAR);
+	const std::string OR = "|";
+	std::string r(R"(\{|\})" + OR + COMMENT + OR + STRING + OR + CHAR);
 
 	auto v = splitr(s, r);
 
