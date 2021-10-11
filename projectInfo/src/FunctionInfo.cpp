@@ -79,7 +79,7 @@ bool FunctionInfo::check(std::string const& s, std::size_t f,
 
 	i = curly - 1;
 	className = i >= 0 && i < int(classes.size()) ? classes[i] : "";
-	line = countLines(s.substr(0, p), lines);
+	line = addLines(s.substr(0, p), lines);
 	file = fileName;
 
 	//rfind because Bridge::FS::init(){

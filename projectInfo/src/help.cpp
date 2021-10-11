@@ -264,7 +264,10 @@ std::string spanSurround(std::string s, std::string _class) {
 	return "<span class=" + c + _class + c + ">" + s + "</span>";
 }
 
-int countLines(const std::string& s, int lines) {
-	return lines + countOccurence(s, '\n');
+int addLines(const std::string& s, int lines) {
+	return lines + countLines(s);
 }
 
+int countLines(const std::string& s) {
+	return countOccurence(s, '\n');
+}

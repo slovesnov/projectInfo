@@ -34,7 +34,7 @@ bool ClassInfo::check(const std::string& s, VString const& classes, int curly,
 	}
 
 	file = fileName;
-	line = countLines(s.substr(0, match.position(0)), lines);
+	line = addLines(s.substr(0, match.position(0)), lines);
 	q = match.str(0);
 	if (!q.empty() && q[0] == '\n') { //because check first symbol in regex not '<'
 		line++;

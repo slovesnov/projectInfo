@@ -55,6 +55,7 @@ std::size_t getBalanceBracketsPos(const std::string& s, SURROUND su);
 
 std::string toHTML(const std::string& s);
 std::string spanSurround(std::string s, std::string _class);
-int countLines(const std::string& s, int lines);
+int addLines(const std::string& s, int lines);
+int countLines(const std::string& s);
 
 #endif /* HELP_H_ */

@@ -133,7 +133,7 @@ int main(int argc, char* argv[]) {
 	f<<s;
 
 	printf("the end removed files %d\ntime %.2lf(s)", ProjectInfo::removedFiles(),
-			double(clock() - begin) / CLOCKS_PER_SEC);
+			timeElapse(begin));
 
 #endif
 }

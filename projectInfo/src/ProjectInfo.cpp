@@ -180,7 +180,7 @@ std::string ProjectInfo::jsFileData(bool oneProject) {
 
 void ProjectInfo::proceedFunctions(std::string const& file,
 		std::string const& fileName) {
-	int i, j,k,l,nl, line, curly;
+	int i, j,k, line, curly;
 	std::string s, e, q;
 	std::size_t f;
 	VString classes,v;
@@ -220,25 +220,25 @@ void ProjectInfo::proceedFunctions(std::string const& file,
 		}
 	}
 
+	//\b void meanwhile(){}
+	const std::regex BLOCK(R"(\b(for|if|while|catch|switch)\s*$)");
+
 	curly = 0;
 	i = 0;
-	nl=1;
+	line=1;
 	v = splitr(s, r);
-	k=l=0;
+	k=0;
 	for (auto it = v.begin(); it != v.end();  it++,i++) {
 		auto const&a=*it;
 
 		//adjust comment new lines
-		l+=a.length();
+		j=a.length();
 		for(auto const&b : vp){//TODO
-			if(b.second>=k && b.second<l){
-				nl += countOccurence(b.first, '\n');
+			if(b.second>=k && b.second<k+j){
+				line += countLines(b.first);
 			}
 		}
-		k=l;
-
-		line=nl;
-		nl += countOccurence(a, '\n');
+		k+=j;
 
 		//println("[%s]%d",a.c_str(),line)
 
@@ -253,14 +253,14 @@ void ProjectInfo::proceedFunctions(std::string const& file,
 				}
 			}
 			curly++;
-			continue;
+			goto l337;
 		}
 		else if (a == "}") {
 			curly--;
-			continue;
+			goto l337;
 		}
 		else if (a[0] == '"' || a[0] == '\'') {
-			continue;
+			goto l337;
 		}
 
 		//proceed only if next lexeme is '{'
@@ -268,7 +268,7 @@ void ProjectInfo::proceedFunctions(std::string const& file,
 			break;
 		}
 		if (v[i + 1] != "{") {
-			continue;
+			goto l337;
 		}
 
 		/* get class inheritance ONLY IF next "{" because
@@ -286,15 +286,13 @@ void ProjectInfo::proceedFunctions(std::string const& file,
 		}
 
 		if (pf(a, s, e, f)) {
-			continue;
+			goto l337;
 		}
 
 		q = s.substr(0, f);
 
-		//\b void meanwhile(){}
-		std::regex r(R"(\b(for|if|while|catch|switch)\s*$)");
-		if (regex_search(q, r)) {
-			continue;
+		if (regex_search(q, BLOCK)) {
+			goto l337;
 		}
 
 		/*
@@ -326,7 +324,7 @@ void ProjectInfo::proceedFunctions(std::string const& file,
 			}
 
 			if (pf(q, s, e, f)) {
-				continue;
+				goto l337;
 			}
 		}
 
@@ -335,6 +333,9 @@ void ProjectInfo::proceedFunctions(std::string const& file,
 		}
 		else{
 		}
+
+l337:
+	line+=countLines(a);
 	}
 }
 
