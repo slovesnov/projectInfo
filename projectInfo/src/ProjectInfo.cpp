@@ -180,13 +180,13 @@ std::string ProjectInfo::jsFileData(bool oneProject) {
 
 void ProjectInfo::proceedFunctions(std::string const& file,
 		std::string const& fileName) {
-	int i, j,k, line, curly;
+	int i, j, line, curly;
 	std::string s, e, q;
 	std::size_t f;
 	VString classes,v;
 	ClassInfo ci;
 	FunctionInfo fi;
-	VPStringInt vp;
+	VPStringSize vp;
 
 	std::ifstream t(file);
 	std::stringstream buffer;
@@ -227,17 +227,15 @@ void ProjectInfo::proceedFunctions(std::string const& file,
 	i = 0;
 	line=1;
 	v = splitr(s, r);
-	k=0;
+	std::size_t bp=0;
 	for (auto const&a:v) {
 
 		//adjust comment new lines
-		j=a.length();
 		for(auto const&b : vp){//TODO
-			if(b.second>=k && b.second<k+j){
+			if(b.second>=bp && b.second<bp+a.length()){
 				line += countLines(b.first);
 			}
 		}
-		k+=j;
 
 		//println("[%s]%d",a.c_str(),line)
 
@@ -328,6 +326,13 @@ void ProjectInfo::proceedFunctions(std::string const& file,
 		}
 
 		if (fi.check(s, f, e, classes, curly, fileName, line)) {
+			fi.comment.clear();
+			for(auto const&b : vp){//TODO
+				if(b.second>=bp && b.second<bp+a.length()){
+					fi.comment.push_back({b.first,b.second-bp});
+				}
+			}
+
 			m_fi.push_back(fi);
 		}
 		else{
@@ -336,6 +341,7 @@ void ProjectInfo::proceedFunctions(std::string const& file,
 l337:
 	i++;
 	line+=countLines(a);
+	bp+=a.length();
 	}
 }
 

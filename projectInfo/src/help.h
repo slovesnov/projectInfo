@@ -28,11 +28,11 @@ enum SURROUND {
 
 using PStringString = std::pair<std::string,std::string>;
 using PStringChar = std::pair<std::string,char>;
-using PStringInt = std::pair<std::string,int>;
+using PStringSize = std::pair<std::string,std::size_t>;
 
 DECLARE_VECTOR_TYPE(PStringString)
 DECLARE_VECTOR_TYPE(PStringChar)
-DECLARE_VECTOR_TYPE(PStringInt)
+DECLARE_VECTOR_TYPE(PStringSize)
 
 std::string joinVInverse(VString const&v);
 std::string jc(VString const &v, const char separator=',');

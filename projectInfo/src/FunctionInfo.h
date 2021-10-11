@@ -20,6 +20,7 @@ struct FunctionInfo {
 	std::string parameters;
 	std::string file;
 	int line;
+	VPStringSize comment;
 
 	bool check(std::string const& s, std::size_t f, std::string const& e,
 			VString const& classes, int curly, std::string const& fileName,
