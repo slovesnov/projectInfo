@@ -21,6 +21,7 @@ struct FunctionInfo {
 	std::string file;
 	int line;
 	VPStringSize comment;
+	std::size_t recognizeFirst,pFirst;
 
 	bool check(std::string const& s, std::size_t f, std::string const& e,
 			VString const& classes, int curly, std::string const& fileName,
@@ -29,7 +30,7 @@ struct FunctionInfo {
 	std::string js();
 
 	bool getItem(std::string const& s, std::size_t& pos, std::string& r);
-	std::string string(); //for debug
+	//std::string string(); //for debug
 
 	bool isTemplatePrecede(std::string const& s,int&pos);
 };

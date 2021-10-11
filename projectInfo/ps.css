@@ -101,6 +101,10 @@ span.k{
 	color: rgb(127,0,85);
 }
 
+/* span.c{
+	color: rgb(0,255,0);
+} */
+
 /*function name with class like eclipse*/
 span.b, span.k{
 	font-weight: bold;

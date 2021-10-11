@@ -206,19 +206,32 @@ void ProjectInfo::proceedFunctions(std::string const& file,
 	const std::string OR = "|";
 	const std::string r(R"(\{|\})" + OR + STRING + OR + CHAR);
 
-	//remove comments DO FULL SPLIT!!!
+	//remove comments DO FULL SPLIT don't need comments inside strings
 	v = splitr(s, r+OR+COMMENT);
 	s="";
 	i=0;
 	for(auto const&a:v){
 		if (regex_search(a, std::regex("^" + COMMENT))) {
 			vp.push_back({a,i});
+//			printl("pos",i,countLines(a))
 		}
 		else{
 			s+=a;
 			i+=a.length();
 		}
 	}
+
+//	printl("["+s+"]",s.length())
+//	printl("["+s.substr(23)+"]")
+
+//	q=s;
+//	for(auto it=vp.rbegin();it!=vp.rend();it++){
+//		auto a=it->second;
+//		q=q.substr(0, a)+it->first+q.substr(a);
+//	}
+//	printl(q)
+
+
 
 	//\b void meanwhile(){}
 	const std::regex BLOCK(R"(\b(for|if|while|catch|switch)\s*$)");
@@ -227,15 +240,20 @@ void ProjectInfo::proceedFunctions(std::string const& file,
 	i = 0;
 	line=1;
 	v = splitr(s, r);
-	std::size_t bp=0;
+	std::size_t k=0,pk,la;
 	for (auto const&a:v) {
 
 		//adjust comment new lines
+		la=a.length();
+		pk=k;
+		//printl(k,k+la)
 		for(auto const&b : vp){//TODO
-			if(b.second>=bp && b.second<bp+a.length()){
+			if(b.second>=k && b.second<k+la){
 				line += countLines(b.first);
 			}
 		}
+		k+=la;
+
 
 		//println("[%s]%d",a.c_str(),line)
 
@@ -326,13 +344,18 @@ void ProjectInfo::proceedFunctions(std::string const& file,
 		}
 
 		if (fi.check(s, f, e, classes, curly, fileName, line)) {
+			//adjust lines
 			fi.comment.clear();
 			for(auto const&b : vp){//TODO
-				if(b.second>=bp && b.second<bp+a.length()){
-					fi.comment.push_back({b.first,b.second-bp});
+				if(b.second>pk+fi.recognizeFirst && b.second<pk+la){
+					fi.line -= countLines(b.first);
+				}
+				if(b.second>pk+fi.pFirst && b.second<pk+la){
+//					printl(b.second,pk,fi.pFirst,"#",b.second-pk-fi.pFirst,b.first)
+//					printl(fi.parameters,fi.parameters.length())
+					fi.comment.push_back({b.first,b.second-pk-fi.pFirst});
 				}
 			}
-
 			m_fi.push_back(fi);
 		}
 		else{
@@ -341,7 +364,6 @@ void ProjectInfo::proceedFunctions(std::string const& file,
 l337:
 	i++;
 	line+=countLines(a);
-	bp+=a.length();
 	}
 }
 

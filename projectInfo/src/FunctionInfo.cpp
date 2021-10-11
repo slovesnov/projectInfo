@@ -65,9 +65,11 @@ bool FunctionInfo::check(std::string const& s, std::size_t f,
 			}
 		}
 //		printl(b)
+//		printl(ff+1)
 
 		v.push_back(b);
 		p = ff;
+		recognizeFirst=ff+1;
 	}
 
 	if (v.size() == 1 && v[0] == DEFINE) {
@@ -89,6 +91,7 @@ bool FunctionInfo::check(std::string const& s, std::size_t f,
 		name = name.substr(ff + strlen(S));
 	}
 
+	pFirst=f;
 	parameters = s.substr(f) + rtrim(e);
 	if (name == className || name == "~" + className) {
 		predicate = "";
@@ -130,14 +133,25 @@ bool FunctionInfo::check(std::string const& s, std::size_t f,
 
 std::string FunctionInfo::js() {
 	VString v;
-	std::string s;
+	std::string s,p;
 	if (!className.empty()) {
 		s = className + "::";
 	}
 
+//	for(auto a:comment){
+//		p+=forma(a.first,a.second);
+//	}
+
+	p=parameters;
+	//assume comment[i+1].second > comment[i].second
+	for(auto it=comment.rbegin();it!=comment.rend();it++){
+		auto a=it->second;
+		p=p.substr(0, a)+it->first+p.substr(a);
+	}
+
 	JS2("p",
 			toHTML(predicate) + " " + spanSurround(s + name, "b")
-					+ toHTML(parameters))
+					+ toHTML(p))
 	JS2("fileline", jsFileLine(file, line))
 
 	/* column for sorting of 'p' column
@@ -149,7 +163,7 @@ std::string FunctionInfo::js() {
 	return surround(jc(v), CURLY);
 
 }
-
+/*
 std::string FunctionInfo::string() {
 	VString v;
 	std::string s;
@@ -160,7 +174,7 @@ std::string FunctionInfo::string() {
 	return predicate + " " + s + name + parameters + " " + file
 			+ std::to_string(line);
 }
-
+*/
 bool FunctionInfo::isValidItem(std::string const& s) {
 	return ONE_OF(s,VALID) || startsWith(s, TEMPLATE) || s == CONST + "*"
 			|| s == CONST + "&";

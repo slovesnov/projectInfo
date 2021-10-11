@@ -230,9 +230,14 @@ std::size_t getBalanceBracketsPos(const std::string& s, SURROUND su) {
 std::string toHTML(const std::string& s) {
 	int i;
 	std::string s1;
+	// "'" -> "&#39;"
+	//"void f(char c/*=','*/)" single quote inside js string so replace quote
+	//
+	// "\\" -> &#92;
+	//"void f(char c/*='\n'*/)" backslaskh inside js string so replace quote
 
-	const std::string FROM[] = { "&", "<", ">", "\n", "\t" };
-	const std::string TO[] = { "&amp;", "&lt;", "&gt;", "<br>", "  " };
+	const std::string FROM[] = { "&", "<", ">", "\n", "\t","'","\\" };
+	const std::string TO[] = { "&amp;", "&lt;", "&gt;", "<br>", "  ","&#39;","&#92;" };
 	for (i = 0; i < SIZEI(FROM); i++) {
 		s1 = replaceAll(i == 0 ? s : s1, FROM[i], TO[i]);
 	}
