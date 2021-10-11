@@ -142,6 +142,20 @@ std::string FunctionInfo::js() {
 //		p+=forma(a.first,a.second);
 //	}
 
+	p="";
+	std::size_t pos=0;
+	//assume comment[i+1].second > comment[i].second
+	for(auto a:comment){
+		auto b=a.second;
+		p+=toHTML(parameters.substr(pos, b-pos))+spanSurround(toHTML(a.first,false),"c");
+		pos=b;
+	}
+	p+=toHTML(parameters.substr(pos));
+
+	JS2("p",
+			toHTML(predicate) + " " + spanSurround(s + name, "b")
+					+ p)
+/*
 	p=parameters;
 	//assume comment[i+1].second > comment[i].second
 	for(auto it=comment.rbegin();it!=comment.rend();it++){
@@ -152,6 +166,8 @@ std::string FunctionInfo::js() {
 	JS2("p",
 			toHTML(predicate) + " " + spanSurround(s + name, "b")
 					+ toHTML(p))
+*/
+
 	JS2("fileline", jsFileLine(file, line))
 
 	/* column for sorting of 'p' column

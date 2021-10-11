@@ -16,8 +16,8 @@
 #define TYPE 1
 
 std::tuple<std::string,bool,std::string> projectOption[]={
-		/*0*/{"c:/Users/user/git/projectInfo/projectInfo/src",1,"projectInfo"}
-		/*1*/,{"c:/downloads/1",1,"out"}
+		/*0*/{"c:/downloads/1",1,"out"}
+		/*1*/,{"c:/Users/user/git/projectInfo/projectInfo/src",1,"projectInfo"}
 		/*2*/,{"c:/Users/user/git/bridge/bridge/src",1,"bridge"}
 		/*3*/,{"c:/Users/user/git/aslov/aslov/src/aslov",1,"aslov"}
 };

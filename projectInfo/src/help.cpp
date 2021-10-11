@@ -227,7 +227,7 @@ std::size_t getBalanceBracketsPos(const std::string& s, SURROUND su) {
 	}
 }
 
-std::string toHTML(const std::string& s) {
+std::string toHTML(const std::string& s,bool withKeywords/*=true*/) {
 	int i;
 	std::string s1;
 	// "'" -> "&#39;"
@@ -256,9 +256,10 @@ std::string toHTML(const std::string& s) {
 		}
 	}
 
-	for (i = 0; i < SIZEI(KEYWORDS); i++) {
-		s1 = replaceAllr(s1, "\\b" + KEYWORDS[i] + "\\b",
-				spanSurround(KEYWORDS[i], "k"));
+	if(withKeywords){
+		for (auto a : KEYWORDS) {
+			s1 = replaceAllr(s1, "\\b" + a + "\\b", spanSurround(a, "k"));
+		}
 	}
 
 	return s1;

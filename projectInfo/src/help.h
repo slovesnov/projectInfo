@@ -53,7 +53,7 @@ VString splitr(const std::string& subject, const std::string& regex,
 
 std::size_t getBalanceBracketsPos(const std::string& s, SURROUND su);
 
-std::string toHTML(const std::string& s);
+std::string toHTML(const std::string& s,bool withKeywords=true);
 std::string spanSurround(std::string s, std::string _class);
 int addLines(const std::string& s, int lines);
 int countLines(const std::string& s);

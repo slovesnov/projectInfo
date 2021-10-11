@@ -101,9 +101,9 @@ span.k{
 	color: rgb(127,0,85);
 }
 
-/* span.c{
-	color: rgb(0,255,0);
-} */
+span.c{
+	color: rgb(63,127,95);
+}
 
 /*function name with class like eclipse*/
 span.b, span.k{
