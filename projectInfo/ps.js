@@ -1,5 +1,5 @@
 function loadf(){
-	startTab=1;
+	startTab=2;
 	a=["file","class","function"]
 
 	//~ for(i=0;i<3;i++){

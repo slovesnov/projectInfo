@@ -11,20 +11,19 @@
 #include "ProjectInfo.h"
 
 /* -1 - test mode
- * 0-4 - {path,oneProject,outputFileName} from projectOption
+ * >=0 - {path,oneProject,outputFileName} from projectOption
  */
-#define TYPE 4
+#define TYPE 2
 
 std::tuple<std::string,bool,std::string> projectOption[]={
 		/*0*/{"c:/Users/user/git/projectInfo/projectInfo/src",1,"projectInfo"}
 		/*1*/,{"c:/downloads/1",1,"out"}
-		/*2*/,{"D:/slovesno/eclipse/projectInfo/src",1,"out"}
-		/*3*/,{"c:/Users/user/git/bridge/bridge/src",1,"bridge"}
-		/*4*/,{"c:/Users/user/git/aslov/aslov/src/aslov",1,"aslov"}
+		/*2*/,{"c:/Users/user/git/bridge/bridge/src",1,"bridge"}
+		/*3*/,{"c:/Users/user/git/aslov/aslov/src/aslov",1,"aslov"}
 };
 
 int main(int argc, char* argv[]) {
-	assert(TYPE==-1 || (TYPE>=0 && TYPE<=SIZEI(projectOption)) );
+	static_assert(TYPE==-1 || (TYPE>=0 && TYPE<=SIZEI(projectOption)) );
 #if TYPE==-1
 
 	//int i=0;
@@ -59,7 +58,6 @@ int main(int argc, char* argv[]) {
 	}
 
 #else
-
 	clock_t begin = clock();
 	std::string s, s1;
 	VProjectInfo v;
@@ -88,7 +86,9 @@ int main(int argc, char* argv[]) {
 	ProjectInfo::staticInit(root, proceedFunctions, deleteSkipFiles);
 
 	s = "<html><head><script src='ps.js'></script><link rel='stylesheet' href='ps.css'><script>";
+
 	if (oneProject) {
+
 		ProjectInfo v(root);
 
 		for (i = 0; i < 3; i++) {
@@ -108,6 +108,7 @@ int main(int argc, char* argv[]) {
 		s += "</script></head><body onload='loadf()'>";
 		s += "<div class='tab' id='d'></div><span id='s'></span>";
 		printf("functions %lld ", v.m_fi.size());
+
 	}
 	else {
 		for (auto& p : directory_iterator(root)) {
@@ -133,5 +134,6 @@ int main(int argc, char* argv[]) {
 
 	printf("the end removed files %d\ntime %.2lf(s)", ProjectInfo::removedFiles(),
 			double(clock() - begin) / CLOCKS_PER_SEC);
+
 #endif
 }

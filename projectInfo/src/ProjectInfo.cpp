@@ -180,12 +180,13 @@ std::string ProjectInfo::jsFileData(bool oneProject) {
 
 void ProjectInfo::proceedFunctions(std::string const& file,
 		std::string const& fileName) {
-	int i, j, nl, line, curly;
+	int i, j,k,l,nl, line, curly;
 	std::string s, e, q;
 	std::size_t f;
-	VString classes;
+	VString classes,v;
 	ClassInfo ci;
 	FunctionInfo fi;
+	VPStringInt vp;
 
 	std::ifstream t(file);
 	std::stringstream buffer;
@@ -197,28 +198,49 @@ void ProjectInfo::proceedFunctions(std::string const& file,
 	 * can has empty strings it's ok when one separator followed by another
 	 * separator
 	 */
-	std::string COMMENT(
+	const std::string COMMENT(
 			R"((//[^\n]*\n)|(\/\*[\s\S]*?\*\/))");
 	//https://en.wikipedia.org/wiki/String_literal
-	std::string STRING=R"("(\\.|[^\\"])*")"
-	;
-	std::string CHAR = R"('(\\.|[^\\'])')";
+	const std::string STRING=R"("(\\.|[^\\"])*")";
+	const std::string CHAR = R"('(\\.|[^\\'])')";
 	const std::string OR = "|";
-	std::string r(R"(\{|\})" + OR + COMMENT + OR + STRING + OR + CHAR);
+	const std::string r(R"(\{|\})" + OR + STRING + OR + CHAR);
 
-	auto v = splitr(s, r);
+	//remove comments DO FULL SPLIT!!!
+	v = splitr(s, r+OR+COMMENT);
+	s="";
+	i=0;
+	for(auto const&a:v){
+		if (regex_search(a, std::regex("^" + COMMENT))) {
+			vp.push_back({a,i});
+		}
+		else{
+			s+=a;
+			i+=a.length();
+		}
+	}
 
-	nl = 1;
 	curly = 0;
+	i = 0;
+	nl=1;
+	v = splitr(s, r);
+	k=l=0;
+	for (auto it = v.begin(); it != v.end();  it++,i++) {
+		auto const&a=*it;
 
-	i = -1;
-	for (auto&a : v) {
+		//adjust comment new lines
+		l+=a.length();
+		for(auto const&b : vp){//TODO
+			if(b.second>=k && b.second<l){
+				nl += countOccurence(b.first, '\n');
+			}
+		}
+		k=l;
 
-		printl(a)
-
-		i++;		//increase here to avoid bugs when do continue
-		line = nl;
+		line=nl;
 		nl += countOccurence(a, '\n');
+
+		//println("[%s]%d",a.c_str(),line)
 
 		if (a == "{") {
 			//Note some of v[..] could be empty
@@ -238,9 +260,6 @@ void ProjectInfo::proceedFunctions(std::string const& file,
 			continue;
 		}
 		else if (a[0] == '"' || a[0] == '\'') {
-			continue;
-		}
-		else if (regex_search(a, std::regex("^" + COMMENT))) {
 			continue;
 		}
 
@@ -312,12 +331,10 @@ void ProjectInfo::proceedFunctions(std::string const& file,
 		}
 
 		if (fi.check(s, f, e, classes, curly, fileName, line)) {
-			printinfo
 			m_fi.push_back(fi);
 		}
 		else{
 		}
-
 	}
 }
 
