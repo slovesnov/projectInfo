@@ -228,8 +228,7 @@ void ProjectInfo::proceedFunctions(std::string const& file,
 	line=1;
 	v = splitr(s, r);
 	k=0;
-	for (auto it = v.begin(); it != v.end();  it++,i++) {
-		auto const&a=*it;
+	for (auto const&a:v) {
 
 		//adjust comment new lines
 		j=a.length();
@@ -335,6 +334,7 @@ void ProjectInfo::proceedFunctions(std::string const& file,
 		}
 
 l337:
+	i++;
 	line+=countLines(a);
 	}
 }
