@@ -12,10 +12,10 @@
 #define HELP_H_
 
 #include <regex>
-#include <sstream>
 
 #include "aslov.h"
-
+class ContentInfo;
+class ProjectInfo;
 
 #define JS2(a,b) v.push_back(js2(a, b));
 
@@ -57,5 +57,12 @@ std::string toHTML(const std::string& s,bool withKeywords=true);
 std::string spanSurround(std::string s, std::string _class);
 int addLines(const std::string& s, int lines);
 int countLines(const std::string& s);
+
+
+void proceedFile(PStringString const& data,ContentInfo& coi);
+bool pf(std::string const& a, std::string& s, std::string& e,
+		std::size_t& f);
+
+void proceed(int n,ProjectInfo*pi);
 
 #endif /* HELP_H_ */

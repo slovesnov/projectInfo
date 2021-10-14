@@ -11,16 +11,14 @@
 #include <map>
 #include <set>
 #include <ctime>
+//TODO
 #include <experimental/filesystem>
 using namespace std::experimental::filesystem;
 
-#include "FunctionInfo.h"
-#include "ClassInfo.h"
 #include "FileInfo.h"
+#include "ContentInfo.h"
 
-using MSCI =std::map<std::string,ClassInfo>;
-
-class ProjectInfo {
+class ProjectInfo: public ContentInfo {
 	static std::string m_root;
 	static bool m_deleteSkipFiles;
 	static bool m_proceedFunctions;
@@ -34,9 +32,7 @@ class ProjectInfo {
 	std::string m_name;
 
 public:
-
-	VFunctionInfo m_fi;
-	MSCI m_ci;
+	VPStringString m_vcontentFile;
 
 	//if deleteSkipFiles is true then remove all files which is skipped
 	static void staticInit(std::string const& root, bool proceedFunctions,
@@ -74,12 +70,10 @@ public:
 
 	std::string jsFileData(bool oneProject);
 
-	void proceedFunctions(std::string const& content, std::string const& fileName);
 	void postProceedFunctions();
 
 	std::string jsFunctionsData();
 	std::string jsClassData();
-	bool pf(std::string const& a, std::string& s, std::string& e, std::size_t& f);
 };
 DECLARE_VECTOR_TYPE(ProjectInfo)
 

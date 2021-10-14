@@ -11,6 +11,7 @@
 #include <cassert>
 
 #include "help.h"
+#include "ProjectInfo.h"
 
 //https://en.cppreference.com/w/cpp/keyword
 const std::string KEYWORDS[] = { "class", //class should goes first, because change on <span class=...
@@ -276,4 +277,217 @@ int addLines(const std::string& s, int lines) {
 
 int countLines(const std::string& s) {
 	return countOccurence(s, '\n');
+}
+
+void proceedFile(PStringString const& data,ContentInfo& coi){
+	const std::string content=data.first;
+	const std::string fileName=data.second;
+
+	int i, j, line, curly;
+	std::string s, e, q;
+	std::size_t f;
+	VString classes,v;
+	ClassInfo ci;
+	FunctionInfo fi;
+	VPStringSize vp, vp1;
+	int64_t k, d,la;
+	VPStringSize::const_iterator sit,it;
+
+	/* splitters { or } or single line comment or multiline comment
+	 * or string constant
+	 * can has empty strings it's ok when one separator followed by another
+	 * separator
+	 */
+	const std::string COMMENT(
+			R"((//[^\n]*\n)|(\/\*[\s\S]*?\*\/))");
+	//https://en.wikipedia.org/wiki/String_literal
+	const std::string STRING=R"("(\\.|[^\\"])*")";
+	const std::string CHAR = R"('(\\.|[^\\'])')";
+	const std::string OR = "|";
+	const std::string r(R"(\{|\})" + OR + STRING + OR + CHAR);
+
+	//remove comments DO FULL SPLIT don't need comments inside strings
+	v = splitr(content, r+OR+COMMENT);
+	s="";
+	i=0;
+	for(auto const&a:v){
+		if (regex_search(a, std::regex("^" + COMMENT))) {
+			vp.push_back({a,i});
+			//printl(i,a)
+			//printl(i)
+		}
+		else{
+			s+=a;
+			i+=a.length();
+		}
+	}
+
+//	printl("["+s+"]",s.length())
+//	printl("["+s.substr(23)+"]")
+
+//	q=s;
+//	for(auto it=vp.rbegin();it!=vp.rend();it++){
+//		auto a=it->second;
+//		q=q.substr(0, a)+it->first+q.substr(a);
+//	}
+//	printl(q)
+
+
+
+	//\b void meanwhile(){}
+	const std::regex BLOCK(R"(\b(for|if|while|catch|switch)\s*$)");
+
+	curly = 0;
+	i = 0;
+	line=1;
+	v = splitr(s, r);
+	k=0;
+	sit=vp.begin();
+	for (auto const&a:v) {
+
+		//adjust comment new lines
+		la = a.length();
+		vp1.clear();
+		for (it = sit; it != vp.end(); it++) {
+			auto const &b = *it;
+			d = (int64_t)(b.second) - k;
+			if(d >= la){
+				sit=it;
+				break;
+			}
+			if (d>=0 ) {
+				vp1.push_back( { b.first, d });
+				line += countLines(b.first);
+			}
+		}
+		k += la;
+
+		//println("[%s]%d",a.c_str(),line)
+
+		if (a == "{") {
+			//Note some of v[..] could be empty
+			s = i == 0 ? "" : v[i - 1];
+			if (!s.empty()) {
+				if (ci.check(s, classes, curly, fileName, line)) {
+					classes.push_back(ci.name);
+				}
+				else {
+				}
+			}
+			curly++;
+			goto l337;
+		}
+		else if (a == "}") {
+			curly--;
+			goto l337;
+		}
+		else if (a[0] == '"' || a[0] == '\'') {
+			goto l337;
+		}
+
+		//proceed only if next lexeme is '{'
+		if (i == int(v.size() - 1)) {
+			break;
+		}
+		if (v[i + 1] != "{") {
+			goto l337;
+		}
+
+		/* get class inheritance ONLY IF next "{" because
+		 * "class Frame;" is not declaration
+		 */
+		if (ci.check(a, classes, curly, fileName, line)) {
+/*TODO check after
+			if (m_ci.find(ci.name) != m_ci.end()) {
+				auto& q = m_ci.find(ci.name)->second;
+				println("ERROR %s %s:%d [%s:%d]", ci.name.c_str(), q.file.c_str(),
+						q.line, fileName.c_str(), line)
+			}
+			else {
+				m_ci[ci.name] = ci;
+			}
+*/
+			coi.m_ci[ci.name] = ci;
+		}
+
+		if (pf(a, s, e, f)) {
+			goto l337;
+		}
+
+		q = s.substr(0, f);
+
+		if (regex_search(q, BLOCK)) {
+			goto l337;
+		}
+
+		/*
+		 AboutDialog::AboutDialog() :
+		 BaseDialog(MENU_ABOUT) {
+		 =>
+		 AboutDialog::AboutDialog()
+
+		 //also this test later
+		 public:
+		 void resize(int n, int _k) {
+
+		 */
+		j = f;
+		for (j = f; j >= 0 && s[j] != ':'; j--)
+			;
+
+		q = s.substr(0, j);
+
+		/* s[j - 1] == ':'  checks this "bool Base::selectColor(const char* s, GdkRGBA* color)"
+		 * when describe class member s[j]==':' && s[j-1]==':'
+		 */
+
+		if (j >= 1 && s[j - 1] != ':'
+				&& !regex_search(q, std::regex("\\b(public|private|protected)\\s*$"))) {
+
+			if (!regex_search(q, std::regex("\\)\\s*$"))) {
+				printl("strange string", q)
+			}
+
+			if (pf(q, s, e, f)) {
+				goto l337;
+			}
+		}
+
+		if (fi.check(s, f, e, classes, curly, fileName, line,vp1)) {
+//			printl(line,vp1[0].second)
+//			printl("recognizeFirst=",fi.recognizeFirst,"pFirst",fi.pFirst)
+//			printl("["+s+']')
+//			printl("["+s.substr(fi.recognizeFirst, 20)+']')
+//			printl("["+s.substr(fi.pFirst, 20)+']')
+			coi.m_fi.push_back(fi);
+		}
+		else{
+		}
+
+l337:
+	i++;
+	line+=countLines(a);
+	}
+
+}
+
+bool pf(std::string const& a, std::string& s, std::string& e,
+		std::size_t& f) {
+	std::smatch match;
+	std::regex r(R"(\)\s*(const)?\s*$)");
+	if (!regex_search(a, match, r)) {
+		return true;
+	}
+
+	s = a.substr(0, match.position(0));
+	e = match.str(0);
+
+	f = getBalanceBracketsPos(s, ROUND);
+	return f == std::string::npos;
+}
+
+void proceed(int n,ProjectInfo*pi){
+	for(auto&a:pi->m_vcontentFile){
+		proceedFile(a, *pi);
+	}
 }

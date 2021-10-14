@@ -4,12 +4,10 @@
  *  Created on: 09.12.2017
  *      Author: alexey slovesnov
  */
-#include <cassert>
+#include <thread>
 #include <fstream>
 
 #include "ProjectInfo.h"
-#include "FunctionInfo.h"
-#include "ClassInfo.h"
 
 std::string ProjectInfo::m_root;
 bool ProjectInfo::m_deleteSkipFiles;
@@ -71,9 +69,11 @@ void ProjectInfo::staticInit(std::string const& root, bool proceedFunctions,
 }
 
 ProjectInfo::ProjectInfo(const std::string& path) {
-	std::string e, s, q, name;
+	int i;
+	std::string e, s, q, localPath;
+	std::vector<std::thread> vt;
 	const bool one = path == m_root;
-	VPStringString v;
+	const int cores=1;//getNumberOfCores();
 
 	if (one) {
 		std::size_t f = path.rfind('\\');
@@ -106,29 +106,37 @@ ProjectInfo::ProjectInfo(const std::string& path) {
 			continue;
 		}
 
-		name = s.substr( m_root.length() + 1 + (one ? 0 : m_name.length() + 1) );
+		localPath = s.substr( m_root.length() + 1 + (one ? 0 : m_name.length() + 1) );
 
 		if (m_proceedExtension.find(e) != m_proceedExtension.end()) {
 			q=fileGetContent(s);
 			auto ftime = last_write_time(p);
 			std::time_t cftime = decltype(ftime)::clock::to_time_t(ftime);
-			m_vsi.push_back( { name, int(file_size(p)), countLines(q)+1, cftime });
+			m_vsi.push_back( { localPath, int(file_size(p)), countLines(q)+1, cftime });
 
 			if (m_proceedFunctions) {
-				v.push_back({q,name});
+				m_vcontentFile.push_back({q,localPath});
 			}
 
 		}
 		else {
 			//printf("error unknown extension [%s] file [%s]\n", e.c_str(), name);
-			printl("error unknown extension ["+e+"] file ["+name+"]");
+			printl("error unknown extension ["+e+"] file ["+localPath+"]");
 		}
 
 	}
 
-	for(auto& a :v){
-		proceedFunctions(a.first, a.second);
+	for (i=0; i<cores; ++i){
+	    vt.push_back(std::thread(proceed,i,this));
 	}
+
+	for (auto& a : vt){
+		a.join();
+	}
+
+//	for(auto& a :v){
+//		proceedFile(a,*this);
+//	}
 
 	m_size = 0;
 	m_lines = 0;
@@ -177,194 +185,6 @@ std::string ProjectInfo::jsFileData(bool oneProject) {
 
 	v.push_back(js2("a", jc(w), SQUARE));
 	return surround(jc(v), CURLY);
-}
-
-void ProjectInfo::proceedFunctions(std::string const& content,
-		std::string const& fileName) {
-	int i, j, line, curly;
-	std::string s, e, q;
-	std::size_t f;
-	VString classes,v;
-	ClassInfo ci;
-	FunctionInfo fi;
-	VPStringSize vp, vp1;
-	int64_t k, d,la;
-	VPStringSize::const_iterator sit,it;
-
-	s=content;
-
-	/* splitters { or } or single line comment or multiline comment
-	 * or string constant
-	 * can has empty strings it's ok when one separator followed by another
-	 * separator
-	 */
-	const std::string COMMENT(
-			R"((//[^\n]*\n)|(\/\*[\s\S]*?\*\/))");
-	//https://en.wikipedia.org/wiki/String_literal
-	const std::string STRING=R"("(\\.|[^\\"])*")";
-	const std::string CHAR = R"('(\\.|[^\\'])')";
-	const std::string OR = "|";
-	const std::string r(R"(\{|\})" + OR + STRING + OR + CHAR);
-
-	//remove comments DO FULL SPLIT don't need comments inside strings
-	v = splitr(s, r+OR+COMMENT);
-	s="";
-	i=0;
-	for(auto const&a:v){
-		if (regex_search(a, std::regex("^" + COMMENT))) {
-			vp.push_back({a,i});
-			//printl(i,a)
-			//printl(i)
-		}
-		else{
-			s+=a;
-			i+=a.length();
-		}
-	}
-
-//	printl("["+s+"]",s.length())
-//	printl("["+s.substr(23)+"]")
-
-//	q=s;
-//	for(auto it=vp.rbegin();it!=vp.rend();it++){
-//		auto a=it->second;
-//		q=q.substr(0, a)+it->first+q.substr(a);
-//	}
-//	printl(q)
-
-
-
-	//\b void meanwhile(){}
-	const std::regex BLOCK(R"(\b(for|if|while|catch|switch)\s*$)");
-
-	curly = 0;
-	i = 0;
-	line=1;
-	v = splitr(s, r);
-	k=0;
-	sit=vp.begin();
-	for (auto const&a:v) {
-
-		//adjust comment new lines
-		la = a.length();
-		vp1.clear();
-		for (it = sit; it != vp.end(); it++) {
-			auto const &b = *it;
-			d = (int64_t)(b.second) - k;
-			if(d >= la){
-				sit=it;
-				break;
-			}
-			if (d>=0 ) {
-				vp1.push_back( { b.first, d });
-				line += countLines(b.first);
-			}
-		}
-		k += la;
-
-		//println("[%s]%d",a.c_str(),line)
-
-		if (a == "{") {
-			//Note some of v[..] could be empty
-			s = i == 0 ? "" : v[i - 1];
-			if (!s.empty()) {
-				if (ci.check(s, classes, curly, fileName, line)) {
-					classes.push_back(ci.name);
-				}
-				else {
-				}
-			}
-			curly++;
-			goto l337;
-		}
-		else if (a == "}") {
-			curly--;
-			goto l337;
-		}
-		else if (a[0] == '"' || a[0] == '\'') {
-			goto l337;
-		}
-
-		//proceed only if next lexeme is '{'
-		if (i == int(v.size() - 1)) {
-			break;
-		}
-		if (v[i + 1] != "{") {
-			goto l337;
-		}
-
-		/* get class inheritance ONLY IF next "{" because
-		 * "class Frame;" is not declaration
-		 */
-		if (ci.check(a, classes, curly, fileName, line)) {
-			if (m_ci.find(ci.name) != m_ci.end()) {
-				auto& q = m_ci.find(ci.name)->second;
-				println("ERROR %s %s:%d [%s:%d]", ci.name.c_str(), q.file.c_str(),
-						q.line, fileName.c_str(), line)
-			}
-			else {
-				m_ci[ci.name] = ci;
-			}
-		}
-
-		if (pf(a, s, e, f)) {
-			goto l337;
-		}
-
-		q = s.substr(0, f);
-
-		if (regex_search(q, BLOCK)) {
-			goto l337;
-		}
-
-		/*
-		 AboutDialog::AboutDialog() :
-		 BaseDialog(MENU_ABOUT) {
-		 =>
-		 AboutDialog::AboutDialog()
-
-		 //also this test later
-		 public:
-		 void resize(int n, int _k) {
-
-		 */
-		j = f;
-		for (j = f; j >= 0 && s[j] != ':'; j--)
-			;
-
-		q = s.substr(0, j);
-
-		/* s[j - 1] == ':'  checks this "bool Base::selectColor(const char* s, GdkRGBA* color)"
-		 * when describe class member s[j]==':' && s[j-1]==':'
-		 */
-
-		if (j >= 1 && s[j - 1] != ':'
-				&& !regex_search(q, std::regex("\\b(public|private|protected)\\s*$"))) {
-
-			if (!regex_search(q, std::regex("\\)\\s*$"))) {
-				printl("strange string", q)
-			}
-
-			if (pf(q, s, e, f)) {
-				goto l337;
-			}
-		}
-
-		if (fi.check(s, f, e, classes, curly, fileName, line,vp1)) {
-//			printl(line,vp1[0].second)
-//			printl("recognizeFirst=",fi.recognizeFirst,"pFirst",fi.pFirst)
-//			printl("["+s+']')
-//			printl("["+s.substr(fi.recognizeFirst, 20)+']')
-//			printl("["+s.substr(fi.pFirst, 20)+']')
-			m_fi.push_back(fi);
-		}
-		else{
-		}
-
-l337:
-	i++;
-	line+=countLines(a);
-	}
 }
 
 void ProjectInfo::postProceedFunctions() {
@@ -490,19 +310,4 @@ std::string ProjectInfo::jsClassData() {
 		v.push_back(a.second.js());
 	}
 	return jc(v);
-}
-
-bool ProjectInfo::pf(std::string const& a, std::string& s, std::string& e,
-		std::size_t& f) {
-	std::smatch match;
-	std::regex r(R"(\)\s*(const)?\s*$)");
-	if (!regex_search(a, match, r)) {
-		return true;
-	}
-
-	s = a.substr(0, match.position(0));
-	e = match.str(0);
-
-	f = getBalanceBracketsPos(s, ROUND);
-	return f == std::string::npos;
 }
