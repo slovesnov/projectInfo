@@ -13,7 +13,7 @@
 
 #include <regex>
 
-#include "aslov.h"
+#include "ContentInfo.h"
 
 #define JS2(a,b) v.push_back(js2(a, b));
 
@@ -22,18 +22,6 @@ enum SURROUND {
 	CURLY, SQUARE, QUOTE, ROUND, ANGLE
 };
 
-#define DECLARE_VECTOR_TYPE(type) using V##type = std::vector<type>;
-
-using PStringString = std::pair<std::string,std::string>;
-using PStringChar = std::pair<std::string,char>;
-using PStringSize = std::pair<std::string,std::size_t>;
-
-DECLARE_VECTOR_TYPE(PStringString)
-DECLARE_VECTOR_TYPE(PStringChar)
-DECLARE_VECTOR_TYPE(PStringSize)
-
-class ContentInfo;
-DECLARE_VECTOR_TYPE(ContentInfo)
 
 std::string joinVInverse(VString const&v);
 std::string jc(VString const &v, const char separator=',');

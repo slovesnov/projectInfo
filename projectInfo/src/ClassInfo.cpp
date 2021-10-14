@@ -10,6 +10,7 @@
 
 #include <cassert>
 #include "ClassInfo.h"
+#include "help.h"
 
 bool ClassInfo::check(const std::string& s, VString const& classes, int curly,
 		std::string const& fileName, int lines) {

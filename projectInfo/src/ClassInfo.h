@@ -11,7 +11,8 @@
 #ifndef CLASSINFO_H_
 #define CLASSINFO_H_
 
-#include "help.h"
+#include "types.h"
+#include "aslov.h"
 
 class ClassInfo {
 public:

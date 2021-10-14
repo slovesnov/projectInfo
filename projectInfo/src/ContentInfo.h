@@ -26,4 +26,6 @@ public:
 
 };
 
+DECLARE_VECTOR_TYPE(ContentInfo)
+
 #endif /* SRC_CONTENTINFO_H_ */

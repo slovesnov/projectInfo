@@ -11,7 +11,8 @@
 #ifndef FUNCTIONINFO_H_
 #define FUNCTIONINFO_H_
 
-#include "help.h"
+#include "types.h"
+#include "aslov.h"
 
 struct FunctionInfo {
 	std::string predicate;
