@@ -33,6 +33,7 @@ class ProjectInfo: public ContentInfo {
 
 public:
 	VPStringString m_vcontentFile;
+	VContentInfo m_vci;
 
 	//if deleteSkipFiles is true then remove all files which is skipped
 	static void staticInit(std::string const& root, bool proceedFunctions,

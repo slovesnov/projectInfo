@@ -13,15 +13,13 @@
 
 #include "FunctionInfo.h"
 #include "ClassInfo.h"
-using MSCI =std::map<std::string,ClassInfo>;
 
 class ContentInfo {
 public:
 	VFunctionInfo m_fi;
 	MSCI m_ci;
-
-	ContentInfo();
-	virtual ~ContentInfo();
 };
+
+DECLARE_VECTOR_TYPE(ContentInfo)
 
 #endif /* SRC_CONTENTINFO_H_ */

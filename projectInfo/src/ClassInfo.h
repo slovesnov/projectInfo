@@ -11,7 +11,6 @@
 #ifndef CLASSINFO_H_
 #define CLASSINFO_H_
 
-#include <string>
 #include "help.h"
 
 class ClassInfo {
@@ -29,5 +28,7 @@ public:
 	std::string js();
 };
 DECLARE_VECTOR_TYPE(ClassInfo)
+
+using MSCI =std::map<std::string,ClassInfo>;
 
 #endif /* CLASSINFO_H_ */

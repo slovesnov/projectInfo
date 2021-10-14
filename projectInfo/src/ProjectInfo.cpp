@@ -128,15 +128,15 @@ ProjectInfo::ProjectInfo(const std::string& path) {
 
 	for (i=0; i<cores; ++i){
 	    vt.push_back(std::thread(proceed,i,this));
+		m_vci.push_back({});
 	}
+
+	m_fi=m_vci[0].m_fi;
+	m_ci=m_vci[0].m_ci;
 
 	for (auto& a : vt){
 		a.join();
 	}
-
-//	for(auto& a :v){
-//		proceedFile(a,*this);
-//	}
 
 	m_size = 0;
 	m_lines = 0;

@@ -10,12 +10,3 @@
 
 #include "ContentInfo.h"
 
-ContentInfo::ContentInfo() {
-	// TODO Auto-generated constructor stub
-
-}
-
-ContentInfo::~ContentInfo() {
-	// TODO Auto-generated destructor stub
-}
-
