@@ -74,6 +74,7 @@ ProjectInfo::ProjectInfo(const std::string& path) {
 	const char*b;
 	std::string e, s,q;
 	const bool one = path == m_root;
+	VPStringString v;
 
 	if (one) {
 		std::size_t f = path.rfind('\\');
@@ -115,7 +116,7 @@ ProjectInfo::ProjectInfo(const std::string& path) {
 			m_vsi.push_back( { b, int(file_size(p)), countLines(q)+1, cftime });
 
 			if (m_proceedFunctions) {
-				proceedFunctions(s, b);
+				v.push_back({s,b});
 			}
 
 		}
@@ -123,6 +124,10 @@ ProjectInfo::ProjectInfo(const std::string& path) {
 			printf("error unknown extension [%s] file [%s]\n", e.c_str(), b);
 		}
 
+	}
+
+	for(auto& a :v){
+		proceedFunctions(a.first, a.second);
 	}
 
 	m_size = 0;
@@ -186,10 +191,7 @@ void ProjectInfo::proceedFunctions(std::string const& file,
 	int64_t k, d,la;
 	VPStringSize::const_iterator sit,it;
 
-	std::ifstream t(file);
-	std::stringstream buffer;
-	buffer << t.rdbuf();
-	s = buffer.str();
+	s=fileGetContent(file);
 
 	/* splitters { or } or single line comment or multiline comment
 	 * or string constant
@@ -349,6 +351,11 @@ void ProjectInfo::proceedFunctions(std::string const& file,
 		}
 
 		if (fi.check(s, f, e, classes, curly, fileName, line,vp1)) {
+//			printl(line,vp1[0].second)
+//			printl("recognizeFirst=",fi.recognizeFirst,"pFirst",fi.pFirst)
+//			printl("["+s+']')
+//			printl("["+s.substr(fi.recognizeFirst, 20)+']')
+//			printl("["+s.substr(fi.pFirst, 20)+']')
 			m_fi.push_back(fi);
 		}
 		else{

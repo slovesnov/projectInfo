@@ -114,8 +114,14 @@ bool FunctionInfo::check1(std::string const& s, std::size_t f,
 
 	pFirst=f;
 	parameters = s.substr(f) + rtrim(e);
-	if (name == className || name == "~" + className) {
+	bool constructor=name == className;
+	bool destructor=name == "~" + className;
+	if ( constructor || destructor) {
 		predicate = "";
+		recognizeFirst=pFirst-className.length();
+		if(destructor){
+			recognizeFirst--;
+		}
 		return true;
 	}
 
