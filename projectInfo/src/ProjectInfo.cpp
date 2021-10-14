@@ -167,6 +167,7 @@ ProjectInfo::ProjectInfo(const std::string& path) {
 //	println("reading time %.2lf(s)",timeElapse(begin));
 //	begin = clock();
 
+
 	gFileNumber=m_vci.size()-1;
 
 //	sort(m_vci.begin(), m_vci.end());
@@ -251,6 +252,7 @@ void ProjectInfo::postProceedFunctions() {
 	VString v;
 
 	//calculates inheritance table
+	//TODO check not repeated classes
 	for (auto&a : m_ci) {
 		v.push_back(a.name);
 	}

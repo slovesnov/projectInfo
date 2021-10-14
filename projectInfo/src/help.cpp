@@ -60,6 +60,7 @@ const std::string KEYWORDS[] = { "class", //class should goes first, because cha
 		"extern",
 		"false",
 		"float",
+		"final",//add 14oct21
 		"for",
 		"friend",
 		"goto",
@@ -77,6 +78,7 @@ const std::string KEYWORDS[] = { "class", //class should goes first, because cha
 		"operator",
 		"or",
 		"or_eq",
+		"override",//add 14oct21
 		"private",
 		"protected",
 		"public",
@@ -284,7 +286,7 @@ int countLines(const std::string& s) {
 bool pf(std::string const& a, std::string& s, std::string& e,
 		std::size_t& f) {
 	std::smatch match;
-	std::regex r(R"(\)\s*(const)?\s*$)");
+	std::regex r(R"(\)\s*(const)?(\s+(final|override)){0,2}\s*$)");
 	if (!regex_search(a, match, r)) {
 		return true;
 	}

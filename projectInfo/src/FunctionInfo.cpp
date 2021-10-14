@@ -165,9 +165,7 @@ std::string FunctionInfo::js() {
 		s = className + "::";
 	}
 
-//	for(auto a:comment){
-//		p+=forma(a.first,a.second);
-//	}
+//	printl(parameters)
 
 	p="";
 	std::size_t pos=0;
@@ -182,18 +180,6 @@ std::string FunctionInfo::js() {
 	JS2("p",
 			toHTML(predicate) + " " + spanSurround(s + name, "b")
 					+ p)
-/*
-	p=parameters;
-	//assume comment[i+1].second > comment[i].second
-	for(auto it=comment.rbegin();it!=comment.rend();it++){
-		auto a=it->second;
-		p=p.substr(0, a)+it->first+p.substr(a);
-	}
-
-	JS2("p",
-			toHTML(predicate) + " " + spanSurround(s + name, "b")
-					+ toHTML(p))
-*/
 
 	JS2("fileline", jsFileLine(file, line))
 
