@@ -5,7 +5,7 @@
  *      Author: alexey slovesnov
  */
 #include <thread>
-#include <fstream>
+#include <atomic>
 
 #include "ProjectInfo.h"
 
@@ -14,10 +14,9 @@ bool ProjectInfo::m_deleteSkipFiles;
 bool ProjectInfo::m_proceedFunctions;
 int ProjectInfo::m_removed;
 
-#include <atomic>
+const bool ONECORE=0;
 
 extern std::atomic<int> gFileNumber;
-
 
 std::set<std::string> ProjectInfo::m_skipExtension = {
 		"",
@@ -78,7 +77,7 @@ ProjectInfo::ProjectInfo(const std::string& path) {
 	std::string e, s, content, localPath;
 	std::vector<std::thread> vt;
 	const bool one = path == m_root;
-	const int cores=getNumberOfCores();
+	const int cores=ONECORE?1:getNumberOfCores();
 //	clock_t begin = clock();
 
 	if (one) {
