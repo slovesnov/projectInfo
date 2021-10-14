@@ -13,7 +13,7 @@
 /* -1 - test mode
  * >=0 - {path,oneProject,outputFileName} from projectOption
  */
-#define TYPE 1
+#define TYPE 2
 
 std::tuple<std::string,bool,std::string> projectOption[]={
 		/*0*/{"c:/downloads/1",1,"out"}

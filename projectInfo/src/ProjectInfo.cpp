@@ -186,7 +186,9 @@ void ProjectInfo::proceedFunctions(std::string const& file,
 	VString classes,v;
 	ClassInfo ci;
 	FunctionInfo fi;
-	VPStringSize vp;
+	VPStringSize vp, vp1;
+	int64_t k, d,la;
+	VPStringSize::const_iterator sit,it;
 
 	std::ifstream t(file);
 	std::stringstream buffer;
@@ -213,7 +215,8 @@ void ProjectInfo::proceedFunctions(std::string const& file,
 	for(auto const&a:v){
 		if (regex_search(a, std::regex("^" + COMMENT))) {
 			vp.push_back({a,i});
-//			printl("pos",i,countLines(a))
+			//printl(i,a)
+			//printl(i)
 		}
 		else{
 			s+=a;
@@ -240,20 +243,26 @@ void ProjectInfo::proceedFunctions(std::string const& file,
 	i = 0;
 	line=1;
 	v = splitr(s, r);
-	std::size_t k=0,pk,la;
+	k=0;
+	sit=vp.begin();
 	for (auto const&a:v) {
 
 		//adjust comment new lines
-		la=a.length();
-		pk=k;
-		//printl(k,k+la)
-		for(auto const&b : vp){//TODO
-			if(b.second>=k && b.second<k+la){
+		la = a.length();
+		vp1.clear();
+		for (it = sit; it != vp.end(); it++) {
+			auto const &b = *it;
+			d = (int64_t)(b.second) - k;
+			if(d >= la){
+				sit=it;
+				break;
+			}
+			if (d>=0 ) {
+				vp1.push_back( { b.first, d });
 				line += countLines(b.first);
 			}
 		}
-		k+=la;
-
+		k += la;
 
 		//println("[%s]%d",a.c_str(),line)
 
@@ -343,19 +352,7 @@ void ProjectInfo::proceedFunctions(std::string const& file,
 			}
 		}
 
-		if (fi.check(s, f, e, classes, curly, fileName, line)) {
-			//adjust lines
-			fi.comment.clear();
-			for(auto const&b : vp){//TODO
-				if(b.second>pk+fi.recognizeFirst && b.second<pk+la){
-					fi.line -= countLines(b.first);
-				}
-				if(b.second>pk+fi.pFirst && b.second<pk+la){
-//					printl(b.second,pk,fi.pFirst,"#",b.second-pk-fi.pFirst,b.first)
-//					printl(fi.parameters,fi.parameters.length())
-					fi.comment.push_back({b.first,b.second-pk-fi.pFirst});
-				}
-			}
+		if (fi.check(s, f, e, classes, curly, fileName, line,vp1)) {
 			m_fi.push_back(fi);
 		}
 		else{

@@ -27,6 +27,27 @@ const std::string VALID[] = {
 
 bool FunctionInfo::check(std::string const& s, std::size_t f,
 		std::string const& e, VString const& classes, int curly,
+		std::string const &fileName, int lines, VPStringSize const &vc) {
+	if(!check1(s, f, e, classes, curly, fileName, lines)){
+		return false;
+	}
+
+	//adjust lines
+	comment.clear();
+	for(auto const&b : vc){
+		if (b.second > recognizeFirst) {
+			line -= countLines(b.first);
+		}
+		if (b.second > pFirst) {
+			comment.push_back( { b.first, b.second - pFirst });
+		}
+	}
+
+	return true;
+}
+
+bool FunctionInfo::check1(std::string const& s, std::size_t f,
+		std::string const& e, VString const& classes, int curly,
 		std::string const& fileName, int lines) {
 
 //	printl("#"+s+"#");
