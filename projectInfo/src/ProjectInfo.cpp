@@ -71,9 +71,8 @@ void ProjectInfo::staticInit(std::string const& root, bool proceedFunctions,
 }
 
 ProjectInfo::ProjectInfo(const std::string& path) {
-	int i;
 	const char*b;
-	std::string e, s;
+	std::string e, s,q;
 	const bool one = path == m_root;
 
 	if (one) {
@@ -110,13 +109,10 @@ ProjectInfo::ProjectInfo(const std::string& path) {
 		b = s.c_str() + m_root.length() + 1 + (one ? 0 : m_name.length() + 1);
 
 		if (m_proceedExtension.find(e) != m_proceedExtension.end()) {
-			std::ifstream filein(s);
-			std::string line;
-			for (i = 0; getline(filein, line); i++)
-				;
+			q=fileGetContent(s);//need to create variable
 			auto ftime = last_write_time(p);
 			std::time_t cftime = decltype(ftime)::clock::to_time_t(ftime);
-			m_vsi.push_back( { b, int(file_size(p)), i, cftime });
+			m_vsi.push_back( { b, int(file_size(p)), countLines(q)+1, cftime });
 
 			if (m_proceedFunctions) {
 				proceedFunctions(s, b);
