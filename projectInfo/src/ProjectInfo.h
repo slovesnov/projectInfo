@@ -11,6 +11,9 @@
 #include <map>
 #include <set>
 #include <ctime>
+//TODO
+#include <experimental/filesystem>
+using namespace std::experimental::filesystem;
 
 #include "FileInfo.h"
 #include "ContentInfo.h"

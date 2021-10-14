@@ -4,10 +4,9 @@
  *  Created on: 09.12.2017
  *      Author: alexey slovesnov
  */
+//add option to linker library "stdc++fs"
 #include <cstdio>
 #include <fstream>
-#include <filesystem>
-using namespace std::filesystem;
 
 #include "help.h"
 #include "ProjectInfo.h"

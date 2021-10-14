@@ -6,8 +6,6 @@
  */
 #include <thread>
 #include <atomic>
-#include <filesystem>
-using namespace std::filesystem;
 
 #include "aslov.h"
 #include "ProjectInfo.h"
@@ -119,8 +117,7 @@ ProjectInfo::ProjectInfo(const std::string& path) {
 		if (m_proceedExtension.find(e) != m_proceedExtension.end()) {
 			content=fileGetContent(s);
 			auto ftime = last_write_time(p);
-//			std::time_t cftime = decltype(ftime)::clock::to_time_t(ftime);
-			std::time_t cftime=to_time_t(ftime);
+			std::time_t cftime = decltype(ftime)::clock::to_time_t(ftime);
 
 			//assert(cftime==ct);
 			m_vsi.push_back( { localPath, int(file_size(p)), countLines(content)+1, cftime });
