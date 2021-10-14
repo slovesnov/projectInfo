@@ -24,6 +24,8 @@ public:
 
 	ContentInfo(std::string _file,std::string _content);
 
+	bool operator<(ContentInfo const& a)const;
+
 };
 
 DECLARE_VECTOR_TYPE(ContentInfo)

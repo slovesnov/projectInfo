@@ -14,3 +14,7 @@ ContentInfo::ContentInfo(std::string _file, std::string _content) {
 	file=_file;
 	content=_content;
 }
+
+bool ContentInfo::operator <(const ContentInfo &a) const {
+	return content.length()>a.content.length();
+}

@@ -6,6 +6,9 @@
  */
 #include <thread>
 #include <atomic>
+#include <sys/stat.h>
+#include <filesystem>
+using namespace std::filesystem;
 
 #include "aslov.h"
 #include "ProjectInfo.h"
@@ -116,11 +119,38 @@ ProjectInfo::ProjectInfo(const std::string& path) {
 
 		if (m_proceedExtension.find(e) != m_proceedExtension.end()) {
 			content=fileGetContent(s);
+
+			/*
+			 *
 			auto ftime = last_write_time(p);
 			std::time_t cftime = decltype(ftime)::clock::to_time_t(ftime);
+			//this works only if use
+			#include <experimental/filesystem>
+			using namespace std::experimental::filesystem;
+			and add option to linker library "stdc++fs"
+
+			//if use
+			#include <filesystem>
+			using namespace std::filesystem;
+			need to use code, but it returns different results +/- 1 second so it's very difficult to debug program
+			template <typename TP>
+			std::time_t to_time_t(TP tp)
+			{
+				using namespace std::chrono;
+				auto sctp = time_point_cast<system_clock::duration>(tp - TP::clock::now()
+						  + system_clock::now());
+				return system_clock::to_time_t(sctp);
+			}
+
+			so the solution is use old stat() function
+*/
+
+			struct stat result;
+			stat(s.c_str(), &result);
+			auto mod_time = result.st_mtime;
 
 			//assert(cftime==ct);
-			m_vsi.push_back( { localPath, int(file_size(p)), countLines(content)+1, cftime });
+			m_vsi.push_back( { localPath, int(file_size(p)), countLines(content)+1, mod_time });
 
 			if (m_proceedFunctions) {
 				m_vci.push_back({localPath,content});
@@ -138,6 +168,12 @@ ProjectInfo::ProjectInfo(const std::string& path) {
 //	begin = clock();
 
 	gFileNumber=m_vci.size()-1;
+
+//	sort(m_vci.begin(), m_vci.end());
+//	for(auto & a:m_vci){
+//		printl(a.file,a.content.length());
+//	}
+//	fflush(stdout);
 
 	for (i=0; i<cores; ++i){
 	    vt.push_back(std::thread(proceed,i,&m_vci));
