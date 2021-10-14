@@ -71,8 +71,7 @@ void ProjectInfo::staticInit(std::string const& root, bool proceedFunctions,
 }
 
 ProjectInfo::ProjectInfo(const std::string& path) {
-	const char*b;
-	std::string e, s,q;
+	std::string e, s, q, name;
 	const bool one = path == m_root;
 	VPStringString v;
 
@@ -107,21 +106,22 @@ ProjectInfo::ProjectInfo(const std::string& path) {
 			continue;
 		}
 
-		b = s.c_str() + m_root.length() + 1 + (one ? 0 : m_name.length() + 1);
+		name = s.substr( m_root.length() + 1 + (one ? 0 : m_name.length() + 1) );
 
 		if (m_proceedExtension.find(e) != m_proceedExtension.end()) {
-			q=fileGetContent(s);//need to create variable
+			q=fileGetContent(s);
 			auto ftime = last_write_time(p);
 			std::time_t cftime = decltype(ftime)::clock::to_time_t(ftime);
-			m_vsi.push_back( { b, int(file_size(p)), countLines(q)+1, cftime });
+			m_vsi.push_back( { name, int(file_size(p)), countLines(q)+1, cftime });
 
 			if (m_proceedFunctions) {
-				v.push_back({s,b});
+				v.push_back({q,name});
 			}
 
 		}
 		else {
-			printf("error unknown extension [%s] file [%s]\n", e.c_str(), b);
+			//printf("error unknown extension [%s] file [%s]\n", e.c_str(), name);
+			printl("error unknown extension ["+e+"] file ["+name+"]");
 		}
 
 	}
@@ -179,7 +179,7 @@ std::string ProjectInfo::jsFileData(bool oneProject) {
 	return surround(jc(v), CURLY);
 }
 
-void ProjectInfo::proceedFunctions(std::string const& file,
+void ProjectInfo::proceedFunctions(std::string const& content,
 		std::string const& fileName) {
 	int i, j, line, curly;
 	std::string s, e, q;
@@ -191,7 +191,7 @@ void ProjectInfo::proceedFunctions(std::string const& file,
 	int64_t k, d,la;
 	VPStringSize::const_iterator sit,it;
 
-	s=fileGetContent(file);
+	s=content;
 
 	/* splitters { or } or single line comment or multiline comment
 	 * or string constant

@@ -74,7 +74,7 @@ public:
 
 	std::string jsFileData(bool oneProject);
 
-	void proceedFunctions(std::string const& file, std::string const& fileName);
+	void proceedFunctions(std::string const& content, std::string const& fileName);
 	void postProceedFunctions();
 
 	std::string jsFunctionsData();
