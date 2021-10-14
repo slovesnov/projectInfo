@@ -15,11 +15,15 @@
 #include "ClassInfo.h"
 
 class ContentInfo {
+
 public:
+	std::string file;
+	std::string content;
 	VFunctionInfo m_fi;
 	MSCI m_ci;
-};
 
-DECLARE_VECTOR_TYPE(ContentInfo)
+	ContentInfo(std::string _file,std::string _content);
+
+};
 
 #endif /* SRC_CONTENTINFO_H_ */

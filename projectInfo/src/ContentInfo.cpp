@@ -10,3 +10,7 @@
 
 #include "ContentInfo.h"
 
+ContentInfo::ContentInfo(std::string _file, std::string _content) {
+	file=_file;
+	content=_content;
+}

@@ -8,10 +8,12 @@
  *         Homepage: slovesnov.users.sourceforge.net
  */
 
-#include <cassert>
+#include <atomic>
 
 #include "help.h"
 #include "ProjectInfo.h"
+
+std::atomic<int> gFileNumber;
 
 //https://en.cppreference.com/w/cpp/keyword
 const std::string KEYWORDS[] = { "class", //class should goes first, because change on <span class=...
@@ -279,10 +281,22 @@ int countLines(const std::string& s) {
 	return countOccurence(s, '\n');
 }
 
-void proceedFile(PStringString const& data,ContentInfo& coi){
-	const std::string content=data.first;
-	const std::string fileName=data.second;
+bool pf(std::string const& a, std::string& s, std::string& e,
+		std::size_t& f) {
+	std::smatch match;
+	std::regex r(R"(\)\s*(const)?\s*$)");
+	if (!regex_search(a, match, r)) {
+		return true;
+	}
 
+	s = a.substr(0, match.position(0));
+	e = match.str(0);
+
+	f = getBalanceBracketsPos(s, ROUND);
+	return f == std::string::npos;
+}
+
+void proceedFile(ContentInfo& coi){
 	int i, j, line, curly;
 	std::string s, e, q;
 	std::size_t f;
@@ -292,6 +306,7 @@ void proceedFile(PStringString const& data,ContentInfo& coi){
 	VPStringSize vp, vp1;
 	int64_t k, d,la;
 	VPStringSize::const_iterator sit,it;
+	const std::string fileName=coi.file;
 
 	/* splitters { or } or single line comment or multiline comment
 	 * or string constant
@@ -307,7 +322,7 @@ void proceedFile(PStringString const& data,ContentInfo& coi){
 	const std::string r(R"(\{|\})" + OR + STRING + OR + CHAR);
 
 	//remove comments DO FULL SPLIT don't need comments inside strings
-	v = splitr(content, r+OR+COMMENT);
+	v = splitr(coi.content, r+OR+COMMENT);
 	s="";
 	i=0;
 	for(auto const&a:v){
@@ -471,23 +486,9 @@ l337:
 
 }
 
-bool pf(std::string const& a, std::string& s, std::string& e,
-		std::size_t& f) {
-	std::smatch match;
-	std::regex r(R"(\)\s*(const)?\s*$)");
-	if (!regex_search(a, match, r)) {
-		return true;
-	}
-
-	s = a.substr(0, match.position(0));
-	e = match.str(0);
-
-	f = getBalanceBracketsPos(s, ROUND);
-	return f == std::string::npos;
-}
-
-void proceed(int n,ProjectInfo*pi){
-	for(auto&a:pi->m_vcontentFile){
-		proceedFile(a, *pi);
+void proceed(int n,VContentInfo* pv){
+	int i;
+	while( (i=gFileNumber--) >= 0 ){
+		proceedFile((*pv)[i]);
 	}
 }

@@ -18,7 +18,7 @@ using namespace std::experimental::filesystem;
 #include "FileInfo.h"
 #include "ContentInfo.h"
 
-class ProjectInfo: public ContentInfo {
+class ProjectInfo {
 	static std::string m_root;
 	static bool m_deleteSkipFiles;
 	static bool m_proceedFunctions;
@@ -32,7 +32,8 @@ class ProjectInfo: public ContentInfo {
 	std::string m_name;
 
 public:
-	VPStringString m_vcontentFile;
+	VFunctionInfo m_fi;
+	MSCI m_ci;
 	VContentInfo m_vci;
 
 	//if deleteSkipFiles is true then remove all files which is skipped

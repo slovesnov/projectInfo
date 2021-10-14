@@ -14,6 +14,11 @@ bool ProjectInfo::m_deleteSkipFiles;
 bool ProjectInfo::m_proceedFunctions;
 int ProjectInfo::m_removed;
 
+#include <atomic>
+
+extern std::atomic<int> gFileNumber;
+
+
 std::set<std::string> ProjectInfo::m_skipExtension = {
 		"",
 		"aps",
@@ -70,10 +75,11 @@ void ProjectInfo::staticInit(std::string const& root, bool proceedFunctions,
 
 ProjectInfo::ProjectInfo(const std::string& path) {
 	int i;
-	std::string e, s, q, localPath;
+	std::string e, s, content, localPath;
 	std::vector<std::thread> vt;
 	const bool one = path == m_root;
-	const int cores=1;//getNumberOfCores();
+	const int cores=getNumberOfCores();
+//	clock_t begin = clock();
 
 	if (one) {
 		std::size_t f = path.rfind('\\');
@@ -109,13 +115,13 @@ ProjectInfo::ProjectInfo(const std::string& path) {
 		localPath = s.substr( m_root.length() + 1 + (one ? 0 : m_name.length() + 1) );
 
 		if (m_proceedExtension.find(e) != m_proceedExtension.end()) {
-			q=fileGetContent(s);
+			content=fileGetContent(s);
 			auto ftime = last_write_time(p);
 			std::time_t cftime = decltype(ftime)::clock::to_time_t(ftime);
-			m_vsi.push_back( { localPath, int(file_size(p)), countLines(q)+1, cftime });
+			m_vsi.push_back( { localPath, int(file_size(p)), countLines(content)+1, cftime });
 
 			if (m_proceedFunctions) {
-				m_vcontentFile.push_back({q,localPath});
+				m_vci.push_back({localPath,content});
 			}
 
 		}
@@ -126,16 +132,27 @@ ProjectInfo::ProjectInfo(const std::string& path) {
 
 	}
 
-	for (i=0; i<cores; ++i){
-	    vt.push_back(std::thread(proceed,i,this));
-		m_vci.push_back({});
-	}
+//	println("reading time %.2lf(s)",timeElapse(begin));
+//	begin = clock();
 
-	m_fi=m_vci[0].m_fi;
-	m_ci=m_vci[0].m_ci;
+	gFileNumber=m_vci.size()-1;
+
+	for (i=0; i<cores; ++i){
+	    vt.push_back(std::thread(proceed,i,&m_vci));
+	}
 
 	for (auto& a : vt){
 		a.join();
+	}
+//	println("proceed time %.2lf(s)",timeElapse(begin));
+
+	for(auto & a:m_vci){
+		auto&b=a.m_fi;
+		m_fi.insert(m_fi.end(), b.begin(), b.end());
+
+		for(auto& e:a.m_ci){
+			m_ci.insert(e);
+		}
 	}
 
 	m_size = 0;
