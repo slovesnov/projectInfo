@@ -7,6 +7,7 @@
 #include <thread>
 #include <atomic>
 
+#include "aslov.h"
 #include "ProjectInfo.h"
 
 std::string ProjectInfo::m_root;
@@ -149,9 +150,8 @@ ProjectInfo::ProjectInfo(const std::string& path) {
 		auto&b=a.m_fi;
 		m_fi.insert(m_fi.end(), b.begin(), b.end());
 
-		for(auto& e:a.m_ci){
-			m_ci.insert(e);
-		}
+		auto&c=a.m_ci;
+		m_ci.insert(m_ci.end(), c.begin(), c.end());
 	}
 
 	m_size = 0;
@@ -163,6 +163,9 @@ ProjectInfo::ProjectInfo(const std::string& path) {
 
 	if (m_proceedFunctions) {
 		postProceedFunctions();
+
+		//after postProceedFunctions because empty class (global functions is added)
+		sort(m_ci.begin(), m_ci.end());
 	}
 
 	/*
@@ -211,8 +214,7 @@ void ProjectInfo::postProceedFunctions() {
 
 	//calculates inheritance table
 	for (auto&a : m_ci) {
-		auto&o = a.second;
-		v.push_back(o.name);
+		v.push_back(a.name);
 	}
 
 	sz = m_ci.size();
@@ -221,10 +223,9 @@ void ProjectInfo::postProceedFunctions() {
 		c[i] = false;
 	}
 	for (auto&a : m_ci) {
-		auto&o = a.second;
-		i = indexOf(o.name,v );
+		i = indexOf(a.name,v );
 		assert(i != -1);
-		for (auto&b : o.base) {
+		for (auto&b : a.base) {
 			s = b.second;
 			//std::vector<int>
 			if (s.find("std::") != std::string::npos) {
@@ -286,9 +287,8 @@ void ProjectInfo::postProceedFunctions() {
 
 	i = 0;
 	for (auto&a : m_ci) {
-		auto&o = a.second;
-		o.childDirectly = cd[i];
-		o.childAll = ca[i];
+		a.childDirectly = cd[i];
+		a.childAll = ca[i];
 		i++;
 	}
 
@@ -297,16 +297,21 @@ void ProjectInfo::postProceedFunctions() {
 	delete[] cd;
 
 	ci.childDirectly = ci.childAll = ci.functions = 0;
-	m_ci[""] = ci;
+	ci.name="";
+	m_ci.push_back(ci);
 
 	for (auto&a : m_fi) {
-		auto it = m_ci.find(a.className);
+		auto& cl=a.className;
+		auto it = std::find_if(m_ci.begin(), m_ci.end(),
+				[&cl](const ClassInfo &c) {
+					return c.name == cl;
+				}
+		);
 		if (it == m_ci.end()) {
 			printl("ERROR no class declaration found", a.className)
 		}
 		else {
-			it->second.functions++;
-
+			it->functions++;
 		}
 	}
 
@@ -323,7 +328,7 @@ std::string ProjectInfo::jsFunctionsData() {
 std::string ProjectInfo::jsClassData() {
 	VString v;
 	for (auto&a : m_ci) {
-		v.push_back(a.second.js());
+		v.push_back(a.js());
 	}
 	return jc(v);
 }

@@ -154,3 +154,7 @@ std::string ClassInfo::js() {
 #undef A
 	return surround(jc(v), CURLY);
 }
+
+bool ClassInfo::operator <(const ClassInfo &c) const {
+	return name<c.name;
+}

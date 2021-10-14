@@ -412,17 +412,7 @@ void proceedFile(ContentInfo& coi){
 		 * "class Frame;" is not declaration
 		 */
 		if (ci.check(a, classes, curly, fileName, line)) {
-/*TODO check after
-			if (m_ci.find(ci.name) != m_ci.end()) {
-				auto& q = m_ci.find(ci.name)->second;
-				println("ERROR %s %s:%d [%s:%d]", ci.name.c_str(), q.file.c_str(),
-						q.line, fileName.c_str(), line)
-			}
-			else {
-				m_ci[ci.name] = ci;
-			}
-*/
-			coi.m_ci[ci.name] = ci;
+			coi.m_ci.push_back(ci);
 		}
 
 		if (pf(a, s, e, f)) {

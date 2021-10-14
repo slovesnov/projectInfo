@@ -20,7 +20,7 @@ public:
 	std::string file;
 	std::string content;
 	VFunctionInfo m_fi;
-	MSCI m_ci;
+	VClassInfo m_ci;
 
 	ContentInfo(std::string _file,std::string _content);
 

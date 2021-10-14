@@ -27,9 +27,9 @@ public:
 	std::string info();
 	std::string fileline();
 	std::string js();
+
+	bool operator<(ClassInfo const& c)const;
 };
 DECLARE_VECTOR_TYPE(ClassInfo)
-
-using MSCI =std::map<std::string,ClassInfo>;
 
 #endif /* CLASSINFO_H_ */

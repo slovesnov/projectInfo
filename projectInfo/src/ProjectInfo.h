@@ -33,7 +33,7 @@ class ProjectInfo {
 
 public:
 	VFunctionInfo m_fi;
-	MSCI m_ci;
+	VClassInfo m_ci;
 	VContentInfo m_vci;
 
 	//if deleteSkipFiles is true then remove all files which is skipped
