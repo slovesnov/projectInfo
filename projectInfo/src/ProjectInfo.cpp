@@ -250,11 +250,16 @@ void ProjectInfo::postProceedFunctions() {
 	std::string s;
 	ClassInfo ci;
 	VString v;
+	std::set<std::string> set;
 
 	//calculates inheritance table
-	//TODO check not repeated classes
 	for (auto&a : m_ci) {
-		v.push_back(a.name);
+		s=a.name;
+		v.push_back(s);
+		if(set.find(s)!=set.end()){
+			printl("ERROR class "+s+" is defined more than one time");
+		}
+		set.insert(s);
 	}
 
 	sz = m_ci.size();

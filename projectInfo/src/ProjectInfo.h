@@ -8,7 +8,6 @@
 #ifndef PROJECTINFO_H_
 #define PROJECTINFO_H_
 
-#include <map>
 #include <set>
 #include <ctime>
 
