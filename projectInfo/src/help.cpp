@@ -156,25 +156,6 @@ std::string jc(VString const &v, const char separator/*=','*/){
 	return joinV(v,separator);
 }
 
-std::string trim(const std::string& s) {
-	std::string q = ltrim(s);
-	return rtrim(q);
-}
-
-std::string ltrim(const std::string& s) {
-	std::string::const_iterator it;
-	for (it = s.begin(); it != s.end() && isspace(*it); it++)
-		;
-	return s.substr(it - s.begin());
-}
-
-std::string rtrim(const std::string& s) {
-	std::string::const_reverse_iterator it;
-	for (it = s.rbegin(); it != s.rend() && isspace(*it); it++)
-		;
-	return s.substr(0, s.length() - (it - s.rbegin()));
-}
-
 std::string replaceAllr(const std::string& subject,
 		const std::string& regexFrom, const std::string& to) {
 	VString v;

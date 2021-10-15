@@ -31,9 +31,6 @@ std::string js2(const char *n, int s);
 std::string jsFileLine(const std::string& file, int line);
 void jsPath(std::string& s);
 
-std::string trim(const std::string& s);
-std::string ltrim(const std::string& s);
-std::string rtrim(const std::string& s);
 std::string replaceAllr(const std::string& subject,
 		const std::string& regexFrom, const std::string& to);
 
@@ -47,6 +44,6 @@ std::string spanSurround(std::string s, std::string _class);
 int addLines(const std::string& s, int lines);
 int countLines(const std::string& s);
 
-void proceed(int n,VContentInfo*);
+void proceed(int n,VContentInfo* pv);
 
 #endif /* HELP_H_ */
