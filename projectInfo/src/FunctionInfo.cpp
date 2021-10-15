@@ -56,6 +56,19 @@ bool FunctionInfo::check1(std::string const& s, std::size_t f,
 	std::size_t p = 0, ff = f;
 
 	getItem(s, ff, name);
+	//i=1 "operator <(...)", i=0 "inline GtkWidget *getWidget()"
+	i=1;
+	for(auto c:name){
+		if(isalnum(c)){
+			i=0;
+			break;
+		}
+	}
+	if(i){
+		getItem(s, ff, q);
+		name=q+" "+name;
+	}
+
 	p = ff; //in case of constructor, store
 
 	//ignore lambdas *name.rbegin()!=']'
@@ -145,7 +158,10 @@ bool FunctionInfo::check1(std::string const& s, std::size_t f,
 	}
 
 	if (!strchr("_~", name[0]) && !isalpha(name[0])) {
-		printa("ERROR invalid name", name)
+		printsi('#',predicate ,className , name , parameters)
+
+		printl(string())
+		printai("ERROR invalid name", name,"#",s)
 	}
 
 	return true;

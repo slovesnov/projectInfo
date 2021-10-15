@@ -134,8 +134,8 @@ int main(int argc, char* argv[]) {
 	std::ofstream f(htmlName+".html");
 	f<<s;
 
-	g_print("the end removed files %d\ntime %.2lf(s)\n", ProjectInfo::removedFiles(),
-			timeElapse(begin));
+	printan("the end removed files", ProjectInfo::removedFiles());
+	printzn("time ",timeElapse(begin),"(s)");
 
 #endif
 }
