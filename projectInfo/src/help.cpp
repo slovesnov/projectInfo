@@ -330,26 +330,12 @@ void proceedFile(ContentInfo& coi){
 	for(auto const&a:v){
 		if (regex_search(a, std::regex("^" + COMMENT))) {
 			vp.push_back({a,i});
-			//printl(i,a)
-			//printl(i)
 		}
 		else{
 			s+=a;
 			i+=a.length();
 		}
 	}
-
-//	printl("["+s+"]",s.length())
-//	printl("["+s.substr(23)+"]")
-
-//	q=s;
-//	for(auto it=vp.rbegin();it!=vp.rend();it++){
-//		auto a=it->second;
-//		q=q.substr(0, a)+it->first+q.substr(a);
-//	}
-//	printl(q)
-
-
 
 	//\b void meanwhile(){}
 	const std::regex BLOCK(R"(\b(for|if|while|catch|switch)\s*$)");
@@ -379,14 +365,17 @@ void proceedFile(ContentInfo& coi){
 		}
 		k += la;
 
-		//println("[%s]%d",a.c_str(),line)
-
 		if (a == "{") {
 			//Note some of v[..] could be empty
 			s = i == 0 ? "" : v[i - 1];
 			if (!s.empty()) {
 				if (ci.check(s, classes, curly, fileName, line)) {
-					classes.push_back(ci.name);
+					if(curly<int(classes.size())){
+						classes[curly]=ci.name;
+					}
+					else{
+						classes.push_back(ci.name);
+					}
 				}
 				else {
 				}
@@ -461,11 +450,6 @@ void proceedFile(ContentInfo& coi){
 		}
 
 		if (fi.check(s, f, e, classes, curly, fileName, line,vp1)) {
-//			printl(line,vp1[0].second)
-//			printl("recognizeFirst=",fi.recognizeFirst,"pFirst",fi.pFirst)
-//			printl("["+s+']')
-//			printl("["+s.substr(fi.recognizeFirst, 20)+']')
-//			printl("["+s.substr(fi.pFirst, 20)+']')
 			coi.m_fi.push_back(fi);
 		}
 		else{

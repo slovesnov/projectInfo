@@ -34,8 +34,9 @@ struct FunctionInfo {
 	std::string js();
 
 	bool getItem(std::string const& s, std::size_t& pos, std::string& r);
-	//std::string string(); //for debug
-
+#ifndef NDEBUG
+	std::string string();
+#endif
 	bool isTemplatePrecede(std::string const& s,int&pos);
 };
 

@@ -109,7 +109,7 @@ ProjectInfo::ProjectInfo(const std::string& path) {
 					m_removed++;
 				}
 				else {
-					printf("error remove file[%s]\n", s.c_str());
+					printan("error remove file",s);
 				}
 			}
 			continue;
@@ -158,8 +158,7 @@ ProjectInfo::ProjectInfo(const std::string& path) {
 
 		}
 		else {
-			//printf("error unknown extension [%s] file [%s]\n", e.c_str(), name);
-			printl("error unknown extension ["+e+"] file ["+localPath+"]");
+			printan("error unknown extension",e,"file",localPath);
 		}
 
 	}
@@ -257,7 +256,7 @@ void ProjectInfo::postProceedFunctions() {
 		s=a.name;
 		v.push_back(s);
 		if(set.find(s)!=set.end()){
-			printl("ERROR class "+s+" is defined more than one time");
+			printan("ERROR class",s,"is defined more than one time");
 		}
 		set.insert(s);
 	}
@@ -278,7 +277,7 @@ void ProjectInfo::postProceedFunctions() {
 			}
 			j = indexOf(s,v);
 			if (j == -1) {
-				printl("ERROR no class declaration found", s);
+				printan("ERROR no class declaration found", s);
 				continue;
 			}
 			assert(j != i);
@@ -353,7 +352,7 @@ void ProjectInfo::postProceedFunctions() {
 				}
 		);
 		if (it == m_ci.end()) {
-			printl("ERROR no class declaration found", a.className)
+			printan("ERROR no class declaration found", a.className)
 		}
 		else {
 			it->functions++;

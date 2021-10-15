@@ -50,9 +50,6 @@ bool FunctionInfo::check1(std::string const& s, std::size_t f,
 		std::string const& e, VString const& classes, int curly,
 		std::string const& fileName, int lines) {
 
-//	printl("#"+s+"#");
-//	printl("#"+e+"#");
-
 	int i;
 	VString v;
 	std::string b, q;
@@ -66,12 +63,10 @@ bool FunctionInfo::check1(std::string const& s, std::size_t f,
 		return false;
 	}
 
-//	printinfo
 	/* until two unrecognized items
 	 */
 	i = 0;
 	while (1) {
-//		printl(s)
 		if (!getItem(s, ff, b)) {
 			break;
 		}
@@ -85,8 +80,6 @@ bool FunctionInfo::check1(std::string const& s, std::size_t f,
 				break;
 			}
 		}
-//		printl(b)
-//		printl(ff+1)
 
 		v.push_back(b);
 		p = ff;
@@ -152,7 +145,7 @@ bool FunctionInfo::check1(std::string const& s, std::size_t f,
 	}
 
 	if (!strchr("_~", name[0]) && !isalpha(name[0])) {
-		printl("ERROR invalid name", name)
+		printa("ERROR invalid name", name)
 	}
 
 	return true;
@@ -164,8 +157,6 @@ std::string FunctionInfo::js() {
 	if (!className.empty()) {
 		s = className + "::";
 	}
-
-//	printl(parameters)
 
 	p="";
 	std::size_t pos=0;
@@ -192,7 +183,7 @@ std::string FunctionInfo::js() {
 	return surround(jc(v), CURLY);
 
 }
-/*
+#ifndef NDEBUG
 std::string FunctionInfo::string() {
 	VString v;
 	std::string s;
@@ -203,7 +194,8 @@ std::string FunctionInfo::string() {
 	return predicate + " " + s + name + parameters + " " + file
 			+ std::to_string(line);
 }
-*/
+#endif
+
 bool FunctionInfo::isValidItem(std::string const& s) {
 	return ONE_OF(s,VALID) || startsWith(s, TEMPLATE) || s == CONST + "*"
 			|| s == CONST + "&";

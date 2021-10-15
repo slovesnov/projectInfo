@@ -8,13 +8,14 @@
 #include <filesystem>
 using namespace std::filesystem;
 
+#include "aslov.h"
 #include "help.h"
 #include "ProjectInfo.h"
 
 /* -1 - test mode
  * >=0 - {path,oneProject,outputFileName} from projectOption
  */
-#define TYPE 0
+#define TYPE 2
 
 std::tuple<std::string,bool,std::string> projectOption[]={
 		/*0*/{"c:/downloads/1",1,"out"}
@@ -108,7 +109,7 @@ int main(int argc, char* argv[]) {
 
 		s += "</script></head><body onload='loadf()'>";
 		s += "<div class='tab' id='d'></div><span id='s'></span>";
-		printf("functions %lld ", v.m_fi.size());
+		printz("functions ",v.m_fi.size()," ");
 
 	}
 	else {
@@ -133,7 +134,7 @@ int main(int argc, char* argv[]) {
 	std::ofstream f(htmlName+".html");
 	f<<s;
 
-	printf("the end removed files %d\ntime %.2lf(s)", ProjectInfo::removedFiles(),
+	g_print("the end removed files %d\ntime %.2lf(s)\n", ProjectInfo::removedFiles(),
 			timeElapse(begin));
 
 #endif
