@@ -431,6 +431,7 @@ void proceedFile(ContentInfo& coi){
 		}
 
 		if (fi.check(s, f, e, classes, curly, fileName, line,vp1)) {
+//			printl(fi.fullString())
 			coi.m_fi.push_back(fi);
 		}
 		else{
@@ -448,4 +449,13 @@ void proceed(int n,VContentInfo* pv){
 	while( (i=gFileNumber--) >= 0 ){
 		proceedFile((*pv)[i]);
 	}
+}
+
+TStringBoolString getProjectOptions(const std::string &name) {
+	bool b=1;
+	auto s="c:/Users/user/git/"+name+"/"+name+"/src";
+	if(name=="aslov"){
+		s+="/"+name;
+	}
+	return {s,b,name};
 }

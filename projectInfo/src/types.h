@@ -19,6 +19,7 @@
 using PStringString = std::pair<std::string,std::string>;
 using PStringChar = std::pair<std::string,char>;
 using PStringSize = std::pair<std::string,std::size_t>;
+using TStringBoolString = std::tuple<std::string,bool,std::string>;
 
 DECLARE_VECTOR_TYPE(PStringString)
 DECLARE_VECTOR_TYPE(PStringChar)

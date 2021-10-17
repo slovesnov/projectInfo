@@ -12,20 +12,26 @@ using namespace std::filesystem;
 #include "help.h"
 #include "ProjectInfo.h"
 
-/* -1 - test mode
- * >=0 - {path,oneProject,outputFileName} from projectOption
+/* TYPE = -1 - test mode
+ * TYPE = 0 .. SIZE(projectName)-1 - {path,oneProject,outputFileName} from projectOption
+ * TYPE = SIZE(projectName) .. SIZE(projectName)+SIZE(projectOptions)-1
  */
-#define TYPE 2
+#define TYPE 5
 
-std::tuple<std::string,bool,std::string> projectOption[]={
-		/*0*/{"c:/downloads/1",1,"out"}
-		/*1*/,{"c:/Users/user/git/projectInfo/projectInfo/src",1,"projectInfo"}
-		/*2*/,{"c:/Users/user/git/bridge/bridge/src",1,"bridge"}
-		/*3*/,{"c:/Users/user/git/aslov/aslov/src/aslov",1,"aslov"}
+const std::string projectName[] = { /*0*/"projectInfo"
+		, /*1*/"bridge"
+		, /*2*/"aslov"
+		, /*3*/"words"
+		,/*4*/"calculator"
+		, /*5*/"imageviewer"
+};
+
+const TStringBoolString projectOptions[] = {
+		/*6*/{"c:/downloads/1",1,"out"}
 };
 
 int main(int argc, char* argv[]) {
-	static_assert(TYPE==-1 || (TYPE>=0 && TYPE<=SIZEI(projectOption)) );
+	static_assert(TYPE==-1 || (TYPE>=0 && TYPE<SIZE(projectName)+SIZE(projectOptions)) );
 #if TYPE==-1
 
 	//int i=0;
@@ -61,15 +67,29 @@ int main(int argc, char* argv[]) {
 
 #else
 	clock_t begin = clock();
-	std::string s, s1;
+	std::string s, s1,root,htmlName;
 	VProjectInfo v;
 	VString w;
 	int i;
-	bool proceedFunctions = true;
-	auto&a=projectOption[TYPE];
-	std::string root=std::get<0>(a);
-	bool oneProject=std::get<1>(a);
-	std::string htmlName=std::get<2>(a);
+	bool proceedFunctions = true,oneProject;
+	TStringBoolString t;
+	if (TYPE >= SIZE(projectName)) {
+		t=projectOptions[TYPE-SIZE(projectName)];
+	}
+	else{
+		t=getProjectOptions(projectName[TYPE]);
+	}
+	root=std::get<0>(t);
+	oneProject=std::get<1>(t);
+	htmlName=std::get<2>(t);
+
+	if (TYPE >= SIZE(projectName)) {
+		printzn("proceed dir ",root," to ",htmlName,".html");
+	}
+	else{
+		printan("proceed",htmlName);
+	}
+	fflush(stdout);
 
 	if (argc > 1) {
 		i = 1;

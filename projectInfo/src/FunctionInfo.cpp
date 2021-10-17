@@ -53,9 +53,14 @@ bool FunctionInfo::check1(std::string const& s, std::size_t f,
 	int i;
 	VString v;
 	std::string b, q;
-	std::size_t p = 0, ff = f;
+	std::size_t p = 0, ff = f,f1;
+
 
 	getItem(s, ff, name);
+	f1=ff+1; //name.c_str()=s.c_str()+ff+1
+//	printzi('[',s.substr(ff+1),']')
+//	printzi('[',name,']')
+//	printl(f-ff);
 	//i=1 "operator <(...)", i=0 "inline GtkWidget *getWidget()"
 	i=1;
 	for(auto c:name){
@@ -67,6 +72,7 @@ bool FunctionInfo::check1(std::string const& s, std::size_t f,
 	if(i){
 		getItem(s, ff, q);
 		name=q+" "+name;
+//		printl(name)
 	}
 
 	p = ff; //in case of constructor, store
@@ -95,10 +101,10 @@ bool FunctionInfo::check1(std::string const& s, std::size_t f,
 		}
 
 		v.push_back(b);
+//		printl("[",b,"]")
 		p = ff;
 		recognizeFirst=ff+1;
 	}
-
 	if (v.size() == 1 && v[0] == DEFINE) {
 		return false;
 	}
@@ -106,16 +112,34 @@ bool FunctionInfo::check1(std::string const& s, std::size_t f,
 	p++;
 	assert(p < s.size());
 
+//	printl(joinV(v,'='))
+//	printzi('=',name,'=',className,'=')
+
+	//#include <stdio.h>\n SearchResult::SearchResult()
+	if(!v.empty() && name[0]=='<' && v[v.size()-1].find("#include")!=std::string::npos){
+//		printzi('[',s,']')
+//		printzi('[',name,']')
+		for(p=name.find('>')+1;p<name.length() && isspace(name[p]);p++);
+		v.clear();
+		name=name.substr(p);
+		p+=f1;
+	}
+	else{
+	}
+
 	i = curly - 1;
 	className = i >= 0 && i < int(classes.size()) ? classes[i] : "";
 	line = addLines(s.substr(0, p), lines);
 	file = fileName;
+
+	//printzi('=',name,'=',className,'=')
 
 	//rfind because Bridge::FS::init(){
 	const char S[] = "::";
 	if ((ff = name.rfind(S)) != std::string::npos) {
 		className = name.substr(0, ff);
 		name = name.substr(ff + strlen(S));
+//		printzi('=',name,'=',className,'=')
 	}
 
 	pFirst=f;
@@ -133,6 +157,13 @@ bool FunctionInfo::check1(std::string const& s, std::size_t f,
 
 	predicate = joinVInverse(v);
 
+	//calculator exception.h	Exception(const char *message) :	std::exception() {
+	if(predicate==":"){
+		printzn(s.substr(0, recognizeFirst),"]")
+		return check1( s, recognizeFirst-2,
+				")", classes, curly,
+				fileName, lines);
+	}
 
 	/*	inline GtkWidget *getWidget() const {
 	 * name="*getWidget"
@@ -207,9 +238,16 @@ std::string FunctionInfo::string() {
 		s = className + "::";
 	}
 
-	return predicate + " " + s + name + parameters + " " + file
+	return predicate + " " + s + name + parameters + " " + file + " "
 			+ std::to_string(line);
 }
+
+std::string FunctionInfo::fullString(){
+#define A(a) #a,'=',a,"\n"
+	return formatz(A(predicate),A(className),A(name),A(parameters),A(file),A(line));
+#undef A
+}
+
 #endif
 
 bool FunctionInfo::isValidItem(std::string const& s) {
@@ -221,7 +259,7 @@ bool FunctionInfo::getItem(std::string const& s, std::size_t& pos,
 		std::string& r) {
 	//use signed int for cycle for normal check f>=0, f1>=0
 	int f = pos, f1;
-	std::string q;
+	std::string q,w;
 
 	for (f--; f >= 0 && isspace(s[f]); f--)
 		;
@@ -229,19 +267,24 @@ bool FunctionInfo::getItem(std::string const& s, std::size_t& pos,
 		return false;
 	}
 
-	if(isTemplatePrecede(s,f)){
+	//never happens
+	if(isLessPrecede(s,f)){
 		q = s.substr(0, f);
 		f1 = getBalanceBracketsPos(q, ANGLE);
 		q = q.substr(f1 + 1, f - f1) + ">";
+//		printl(s)
+//		printl(q)
 		f = f1;
+		printi
 	}
+
 	//use for operators +-*/!
 	for (f1 = f - 1; f1 >= 0; f1--) {
 		if (isalnum(s[f1]) || strchr(":_#~+-*/=!", s[f1])) {
 			continue;
 		}
 
-		if(isTemplatePrecede(s,f1)){
+		if(isLessPrecede(s,f1)){
 			f1 = getBalanceBracketsPos(s.substr(0, f1), ANGLE);
 			continue;
 		}
@@ -250,11 +293,12 @@ bool FunctionInfo::getItem(std::string const& s, std::size_t& pos,
 	}
 
 	pos = f1;
+//	printl('=',s.substr(f1 + 1, f - f1),'=', q)
 	r = s.substr(f1 + 1, f - f1) + q;
 	return true;
 }
 
-bool FunctionInfo::isTemplatePrecede(std::string const& s,int&pos){
+bool FunctionInfo::isLessPrecede(std::string const& s,int&pos){
 	//use signed int for cycle for normal check f>=0
 	int f;
 	for(f=pos ; f>=0 && isspace(s[f]);f--);

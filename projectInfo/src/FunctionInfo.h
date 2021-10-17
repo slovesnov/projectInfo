@@ -33,11 +33,12 @@ struct FunctionInfo {
 	static bool isValidItem(std::string const& s);
 	std::string js();
 
-	bool getItem(std::string const& s, std::size_t& pos, std::string& r);
+	static bool getItem(std::string const& s, std::size_t& pos, std::string& r);
 #ifndef NDEBUG
 	std::string string();
+	std::string fullString();
 #endif
-	bool isTemplatePrecede(std::string const& s,int&pos);
+	static bool isLessPrecede(std::string const& s,int&pos);
 };
 
 DECLARE_VECTOR_TYPE(FunctionInfo)

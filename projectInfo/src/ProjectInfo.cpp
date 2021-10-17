@@ -277,7 +277,7 @@ void ProjectInfo::postProceedFunctions() {
 			}
 			j = indexOf(s,v);
 			if (j == -1) {
-				printan("ERROR no class declaration found", s);
+				printai("ERROR no class declaration found", s);
 				continue;
 			}
 			assert(j != i);
@@ -352,7 +352,7 @@ void ProjectInfo::postProceedFunctions() {
 				}
 		);
 		if (it == m_ci.end()) {
-			printan("ERROR no class declaration found", a.className)
+			printai("ERROR no class declaration found", a.className)
 		}
 		else {
 			it->functions++;

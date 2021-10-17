@@ -13,6 +13,7 @@
 
 #include <regex>
 
+#include "types.h"
 #include "ContentInfo.h"
 
 #define JS2(a,b) v.push_back(js2(a, b));
@@ -45,5 +46,7 @@ int addLines(const std::string& s, int lines);
 int countLines(const std::string& s);
 
 void proceed(int n,VContentInfo* pv);
+
+TStringBoolString getProjectOptions(const std::string& name);
 
 #endif /* HELP_H_ */
