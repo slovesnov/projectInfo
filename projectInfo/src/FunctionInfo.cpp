@@ -115,7 +115,7 @@ bool FunctionInfo::check1(std::string const& s, std::size_t f,
 //	printl(joinV(v,'='))
 //	printzi('=',name,'=',className,'=')
 
-	//#include <stdio.h>\n SearchResult::SearchResult()
+	//"#include <stdio.h>\n SearchResult::SearchResult()" in words projects
 	if(!v.empty() && name[0]=='<' && v[v.size()-1].find("#include")!=std::string::npos){
 //		printzi('[',s,']')
 //		printzi('[',name,']')

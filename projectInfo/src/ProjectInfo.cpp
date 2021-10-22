@@ -20,7 +20,7 @@ int ProjectInfo::m_removed;
 
 const bool ONECORE=0;
 
-extern std::atomic<int> gFileNumber;
+extern std::atomic_int gFileNumber;
 
 std::set<std::string> ProjectInfo::m_skipExtension = {
 		"",

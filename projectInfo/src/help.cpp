@@ -13,7 +13,7 @@
 #include "help.h"
 #include "ProjectInfo.h"
 
-std::atomic<int> gFileNumber;
+std::atomic_int gFileNumber;
 
 //https://en.cppreference.com/w/cpp/keyword
 const std::string KEYWORDS[] = { "class", //class should goes first, because change on <span class=...
