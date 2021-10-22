@@ -25,9 +25,9 @@ const std::string VALID[] = {
 		"&",
 		"*&" };
 
-bool FunctionInfo::check(std::string const& s, std::size_t f,
-		std::string const& e, VString const& classes, int curly,
-		std::string const &fileName, int lines, VPStringSize const &vc) {
+bool FunctionInfo::check(std::string const &s, std::size_t f,
+		std::string const &e, VString const &classes, int curly,
+		std::string const &fileName, const int lines, VPStringSize const &vc) {
 	if(!check1(s, f, e, classes, curly, fileName, lines)){
 		return false;
 	}
@@ -46,21 +46,21 @@ bool FunctionInfo::check(std::string const& s, std::size_t f,
 	return true;
 }
 
-bool FunctionInfo::check1(std::string const& s, std::size_t f,
-		std::string const& e, VString const& classes, int curly,
-		std::string const& fileName, int lines) {
+bool FunctionInfo::check1(std::string const &s, std::size_t f,
+		std::string const &e, VString const &classes, int curly,
+		std::string const &fileName, const int lines) {
 
 	int i;
 	VString v;
 	std::string b, q;
 	std::size_t p = 0, ff = f,f1;
 
+//	printzi('[',s,']',lines)
 
 	getItem(s, ff, name);
 	f1=ff+1; //name.c_str()=s.c_str()+ff+1
 //	printzi('[',s.substr(ff+1),']')
 //	printzi('[',name,']')
-//	printl(f-ff);
 	//i=1 "operator <(...)", i=0 "inline GtkWidget *getWidget()"
 	i=1;
 	for(auto c:name){
@@ -71,8 +71,8 @@ bool FunctionInfo::check1(std::string const& s, std::size_t f,
 	}
 	if(i){
 		getItem(s, ff, q);
+//		printzi('[',q,']')
 		name=q+" "+name;
-//		printl(name)
 	}
 
 	p = ff; //in case of constructor, store
@@ -85,11 +85,7 @@ bool FunctionInfo::check1(std::string const& s, std::size_t f,
 	/* until two unrecognized items
 	 */
 	i = 0;
-	while (1) {
-		if (!getItem(s, ff, b)) {
-			break;
-		}
-
+	while (getItem(s, ff, b)) {
 		if (b == "\n") {
 			continue;
 		}
@@ -105,6 +101,7 @@ bool FunctionInfo::check1(std::string const& s, std::size_t f,
 		p = ff;
 		recognizeFirst=ff+1;
 	}
+//	printvi(p);
 	if (v.size() == 1 && v[0] == DEFINE) {
 		return false;
 	}
@@ -129,6 +126,8 @@ bool FunctionInfo::check1(std::string const& s, std::size_t f,
 
 	i = curly - 1;
 	className = i >= 0 && i < int(classes.size()) ? classes[i] : "";
+//	printvi(p);
+//	printzi('[',s.substr(0, p),']',lines)
 	line = addLines(s.substr(0, p), lines);
 	file = fileName;
 
@@ -152,10 +151,14 @@ bool FunctionInfo::check1(std::string const& s, std::size_t f,
 		if(destructor){
 			recognizeFirst--;
 		}
+		line = addLines(s.substr(0, recognizeFirst), lines);
+//		printzi('[',s.substr(0, recognizeFirst),']',s.substr(recognizeFirst,4),lines)
+//		printvi(predicate)
 		return true;
 	}
 
 	predicate = joinVInverse(v);
+//	printvi(predicate)
 
 	//calculator exception.h	Exception(const char *message) :	std::exception() {
 	if(predicate==":"){
