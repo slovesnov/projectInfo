@@ -16,7 +16,7 @@ using namespace std::filesystem;
  * TYPE = 0 .. SIZE(projectName)-1 - {path,oneProject,outputFileName} from projectOption
  * TYPE = SIZE(projectName) .. SIZE(projectName)+SIZE(projectOptions)-1
  */
-#define TYPE 5
+#define TYPE 6
 
 const std::string projectName[] = { /*0*/"projectInfo"
 		, /*1*/"bridge"

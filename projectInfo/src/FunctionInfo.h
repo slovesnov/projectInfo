@@ -24,10 +24,10 @@ struct FunctionInfo {
 	VPStringSize comment;
 	std::size_t recognizeFirst,pFirst;
 
-	bool check(std::string const &s, std::size_t f, std::string const &e,
+	bool check(std::string const &s, const std::size_t f, std::string const &e,
 			VString const &classes, int curly, std::string const &fileName,
 			const int lines, VPStringSize const &vc);
-	bool check1(std::string const &s, std::size_t f, std::string const &e,
+	bool check1(std::string const &s, const std::size_t f, std::string const &e,
 			VString const &classes, int curly, std::string const &fileName,
 			const int lines);
 	static bool isValidItem(std::string const& s);

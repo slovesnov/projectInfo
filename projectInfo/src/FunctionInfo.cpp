@@ -25,7 +25,7 @@ const std::string VALID[] = {
 		"&",
 		"*&" };
 
-bool FunctionInfo::check(std::string const &s, std::size_t f,
+bool FunctionInfo::check(std::string const &s, const std::size_t f,
 		std::string const &e, VString const &classes, int curly,
 		std::string const &fileName, const int lines, VPStringSize const &vc) {
 	if(!check1(s, f, e, classes, curly, fileName, lines)){
@@ -46,7 +46,7 @@ bool FunctionInfo::check(std::string const &s, std::size_t f,
 	return true;
 }
 
-bool FunctionInfo::check1(std::string const &s, std::size_t f,
+bool FunctionInfo::check1(std::string const &s, const std::size_t f,
 		std::string const &e, VString const &classes, int curly,
 		std::string const &fileName, const int lines) {
 
@@ -55,12 +55,10 @@ bool FunctionInfo::check1(std::string const &s, std::size_t f,
 	std::string b, q;
 	std::size_t p = 0, ff = f,f1;
 
-//	printzi('[',s,']',lines)
+//	printzi('#',s.substr(0,f),"#",s.substr(f),"#",e,'#',lines)
 
 	getItem(s, ff, name);
 	f1=ff+1; //name.c_str()=s.c_str()+ff+1
-//	printzi('[',s.substr(ff+1),']')
-//	printzi('[',name,']')
 	//i=1 "operator <(...)", i=0 "inline GtkWidget *getWidget()"
 	i=1;
 	for(auto c:name){

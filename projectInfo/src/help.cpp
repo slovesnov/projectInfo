@@ -267,7 +267,7 @@ int countLines(const std::string& s) {
 bool pf(std::string const& a, std::string& s, std::string& e,
 		std::size_t& f) {
 	std::smatch match;
-	std::regex r(R"(\)\s*(const)?(\s+(final|override)){0,2}\s*$)");
+	std::regex r(R"(\)\s*(const)?(\s+(final|override|noexcept)){0,3}\s*$)");
 	if (!regex_search(a, match, r)) {
 		return true;
 	}
@@ -280,9 +280,9 @@ bool pf(std::string const& a, std::string& s, std::string& e,
 }
 
 void proceedFile(ContentInfo& coi){
-	int i, j, line, curly;
+	int i, line, curly;
 	std::string s, e, q;
-	std::size_t f;
+	std::size_t p, f,lf;
 	VString classes,v;
 	ClassInfo ci;
 	FunctionInfo fi;
@@ -398,37 +398,73 @@ void proceedFile(ContentInfo& coi){
 		}
 
 		/*
-		 AboutDialog::AboutDialog() :
-		 BaseDialog(MENU_ABOUT) {
-		 =>
-		 AboutDialog::AboutDialog()
+		AboutDialog::AboutDialog() :
+		BaseDialog(MENU_ABOUT) {
+		=> AboutDialog::AboutDialog()
 
-		 //also this test later
-		 public:
-		 void resize(int n, int _k) {
+		Exception(const char *message):std::exception()
+		=> Exception(const char *message)
 
+		//also this test later
+		public:
+		void resize(int n, int _k) {
 		 */
-		j = f;
-		for (j = f; j >= 0 && s[j] != ':'; j--)
-			;
-
-		q = s.substr(0, j);
-
-		/* s[j - 1] == ':'  checks this "bool Base::selectColor(const char* s, GdkRGBA* color)"
-		 * when describe class member s[j]==':' && s[j-1]==':'
-		 */
-
-		if (j >= 1 && s[j - 1] != ':'
-				&& !regex_search(q, std::regex("\\b(public|private|protected)\\s*$"))) {
-
-			if (!regex_search(q, std::regex("\\)\\s*$"))) {
-				printl("strange string", q)
+		lf=f;
+		while ((p = s.find_last_of(':', f)) != std::string::npos) {
+			if(p==0){
+				printl("strange string");
+				break;
+			}
+			f=p-1;
+			if(s[p - 1] == ':'){
+				f--;
+				continue;
 			}
 
-			if (pf(q, s, e, f)) {
-				goto l337;
+			q = s.substr(0, p);
+
+			/* s[p - 1] == ':'  checks this "bool Base::selectColor(const char* s, GdkRGBA* color)"
+			 * when describe class member s[j]==':' && s[j-1]==':'
+			 */
+			//printzi('#',s.substr(0,f),"#",s.substr(f),"#",f)
+			if (!regex_search(q, std::regex("\\b(public|private|protected)\\s*$"))) {
+				if (!regex_search(q, std::regex("\\)\\s*$"))) {
+					printzi("strange string[", q,"]")
+				}
+				if (pf(q, s, e, f)) {
+					goto l337;
+				}
+				else{
+					lf=f;
+					break;
+				}
 			}
-		}
+		}//while
+		f=lf;
+
+//		for (j = f; j >= 0 && s[j] != ':'; j--)
+//			;
+//
+//		q = s.substr(0, j);
+//
+//		/* s[j - 1] == ':'  checks this "bool Base::selectColor(const char* s, GdkRGBA* color)"
+//		 * when describe class member s[j]==':' && s[j-1]==':'
+//		 */
+//		printzi('#',s.substr(0,f),"#",s.substr(f),"#",f)
+//		if (j >= 1 && s[j - 1] != ':'
+//				&& !regex_search(q, std::regex("\\b(public|private|protected)\\s*$"))) {
+//
+//			if (!regex_search(q, std::regex("\\)\\s*$"))) {
+//				printl("strange string", q)
+//			}
+//
+//			printl(f)
+//			if (pf(q, s, e, f)) {
+//				goto l337;
+//			}
+//			printl(f)
+//		}
+//		printzi('#',s.substr(0,f),"#",s.substr(f),"#",e,"#",f)
 
 		if (fi.check(s, f, e, classes, curly, fileName, line,vp1)) {
 //			printl(fi.fullString())
