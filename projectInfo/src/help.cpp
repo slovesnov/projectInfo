@@ -267,7 +267,7 @@ int countLines(const std::string& s) {
 bool pf(std::string const& a, std::string& s, std::string& e,
 		std::size_t& f) {
 	std::smatch match;
-	std::regex r(R"(\)\s*(const)?(\s+(final|override|noexcept)){0,3}\s*$)");
+	std::regex r(R"(\)\s*(const)?(\s+(final|override|noexcept|throw\s*\(\s*\))){0,3}\s*$)");
 	if (!regex_search(a, match, r)) {
 		return true;
 	}
