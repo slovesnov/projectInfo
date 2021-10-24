@@ -8,6 +8,9 @@
  *         Homepage: slovesnov.users.sourceforge.net
  */
 
+
+#include <filesystem>
+using namespace std::filesystem;
 #include <atomic>
 
 #include "help.h"
@@ -494,4 +497,83 @@ TStringBoolString getProjectOptions(const std::string &name) {
 		s+="/"+name;
 	}
 	return {s,b,name};
+}
+
+void proceedDirectory(TStringBoolString const& t,bool proceedFunctions,bool deleteSkipFiles,bool ot){
+	int i;
+	std::string s,s1;
+	clock_t begin = clock();
+	VProjectInfo v;
+	VString w;
+
+	std::string root=std::get<0>(t);
+	const bool oneProject=std::get<1>(t);
+	std::string htmlName=std::get<2>(t);
+
+	if (ot) {
+		printzn("proceed dir ",root," to ",htmlName,".html");
+	}
+	else{
+		printan("proceed",htmlName);
+	}
+	fflush(stdout);
+
+	if (!oneProject) {
+		proceedFunctions = false;
+	}
+
+	ProjectInfo::staticInit(root, proceedFunctions, deleteSkipFiles);
+
+	s = "<html><head><script src='ps.js'></script><link rel='stylesheet' href='ps.css'><script>";
+
+
+	if (oneProject) {
+
+		ProjectInfo v(root);
+
+		for (i = 0; i < 3; i++) {
+			if (i == 0) {
+				s1 = v.jsFileData(true);
+			}
+			else if (i == 1) {
+				s1 = v.jsClassData();
+			}
+			else {
+				s1 = v.jsFunctionsData();
+			}
+			s += "g" + std::to_string(i) + "=" + surround(s1, SQUARE) + ";";
+
+		}
+
+		s += "</script></head><body onload='loadf()'>";
+		s += "<div class='tab' id='d'></div><span id='s'></span>";
+		printz("functions ",v.m_fi.size()," ");
+
+	}
+	else {
+		for (auto& p : directory_iterator(root)) {
+			if (is_directory(p)) {
+				v.push_back(ProjectInfo(p.path().string()));
+			}
+		}
+		sort(v.begin(), v.end());
+
+		for (auto& t : v) {
+			w.push_back(t.jsFileData(false));
+		}
+		s += "gd=" + surround(jc(w), SQUARE) + ";";
+
+		s += "</script></head><body onload='load()'><table id='";
+		s += oneProject ? "table0" : "main";
+		s += "'></table>";
+	}
+	s += "</body></html>";
+
+	std::ofstream f(htmlName+".html");
+	f<<s;
+	if(deleteSkipFiles){
+		printan("the end removed files", ProjectInfo::removedFiles());
+	}
+	printzn("time ",timeElapse(begin),"(s)");
+
 }

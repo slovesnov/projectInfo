@@ -49,4 +49,5 @@ void proceed(int n,VContentInfo* pv);
 
 TStringBoolString getProjectOptions(const std::string& name);
 
+void proceedDirectory(TStringBoolString const& t,bool proceedFunctions,bool deleteSkipFiles,bool ot);
 #endif /* HELP_H_ */
