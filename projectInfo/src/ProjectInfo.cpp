@@ -352,7 +352,7 @@ void ProjectInfo::postProceedFunctions() {
 				}
 		);
 		if (it == m_ci.end()) {
-			printai("ERROR no class declaration found", a.className)
+			printzi("ERROR no class declaration found ", a.className," ",a.file,":",a.line)
 		}
 		else {
 			it->functions++;
