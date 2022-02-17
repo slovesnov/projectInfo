@@ -13,7 +13,7 @@
  * TYPE = 0 .. SIZE(projectName)-1 - {path,oneProject,outputFileName} from projectOption
  * TYPE = SIZE(projectName) .. SIZE(projectName)+SIZE(projectOptions)-1
  */
-#define TYPE 2
+#define TYPE -1
 
 const std::string projectName[] = { /*0*/"projectInfo"
 		, /*1*/"bridge"
